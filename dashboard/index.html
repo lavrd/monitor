@@ -1,0 +1,39 @@
+<head>
+    <title>Docker load monitor</title>
+
+    <link href="./static/css/c3.min.css" rel="stylesheet" type="text/css"/>
+    <link href="./static/css/bulma.css" rel="stylesheet" type="text/css"/>
+
+    <link rel="icon" href="./static/img/favicon.png" type="image/png"/>
+</head>
+
+<body>
+<div class="hero is-small">
+    <div class="hero-body">
+        <div class="container">
+            <h1 class="title is-1">
+                Docker load monitor
+            </h1>
+
+            <div class="columns">
+                <div class="column is-half">
+                    <div class="field has-addons">
+                        <input id="containerName" type="text" class="input" placeholder="container name"/>
+                        <button class="button is-info" onclick="show()">GO</button>
+                        <button class="button is-info" onclick="show()">ALL</button>
+                        <button class="button is-danger" onclick="stop()">STOP</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="chart">
+    <div id="alert" class="is-hidden"></div>
+</div>
+
+<script src="./static/js/d3.min.js"></script>
+<script src="./static/js/c3.min.js"></script>
+<script src="./static/js/dms.js"></script>
+</body>
