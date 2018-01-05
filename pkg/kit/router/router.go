@@ -1,97 +1,82 @@
 package router
 
 import (
-	"context"
-	ctx "github.com/lavrs/dlm/pkg/context"
-	"github.com/lavrs/dlm/pkg/kit/metrics"
-	"gopkg.in/kataras/iris.v6"
-	"gopkg.in/kataras/iris.v6/adaptors/cors"
-	"gopkg.in/kataras/iris.v6/adaptors/httprouter"
-	"gopkg.in/kataras/iris.v6/adaptors/view"
-	"gopkg.in/kataras/iris.v6/middleware/logger"
-	"gopkg.in/kataras/iris.v6/middleware/recover"
-	"time"
+	"encoding/json"
+	"html/template"
+	"net/http"
+	"os"
+
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+	"github.com/spacelavr/dlm/pkg/kit/metrics"
 )
 
-// App returns API configuration
-func App() *iris.Framework {
-	return app()
-}
+// Router returns router configuration
+func Router() http.Handler {
+	r := mux.NewRouter()
 
-// iris configuration
-func app() *iris.Framework {
-	app := iris.New()
-	app.Adapt(
-		iris.EventPolicy{
-			Interrupted: func(*iris.Framework) {
-				ctxwt, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-				defer cancel()
-				app.Shutdown(ctxwt)
-			},
-		},
-		httprouter.New(),
-		cors.New(cors.Options{AllowedOrigins: []string{"*"}}),
-		view.HTML("./dashboard", ".html"),
-	)
-	app.StaticWeb("/static", "./dashboard/static")
-	if ctx.Get().Verbose {
-		app.Use(
-			recover.New(),
-			logger.New(logger.Config{
-				Status: true,
-				IP:     true,
-				Method: true,
-				Path:   true,
-			}),
-		)
-		app.Adapt(iris.DevLogger())
-	}
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./dashboard/static/"))))
+	r.PathPrefix("/dashboard/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./dashboard/static/"))))
 
-	app.Get("/dashboard", dashboard)
-	app.OnError(iris.StatusNotFound, p404)
+	r.HandleFunc("/dashboard", dashboard)
+	r.NotFoundHandler = http.HandlerFunc(p404)
 
-	app.Get("/status", status)
+	r.HandleFunc("/api/metrics/{id}", getMetrics)
+	r.HandleFunc("/api/status", status)
+	r.HandleFunc("/api/stopped", getStopped)
+	r.HandleFunc("/api/launched", getLaunched)
+	r.HandleFunc("/api/logs/{id}", getLogs)
 
-	app.Get("/api/logs/:id", getLogs)
-	app.Get("/api/metrics/:id", getMetrics)
-	app.Get("/api/stopped", getStopped)
-	app.Get("/api/launched", getLaunched)
-
-	app.Boot()
-	return app
+	return handlers.LoggingHandler(os.Stdout, r)
 }
 
 // get API status
-func status(ctx *iris.Context) {
-	ctx.WriteHeader(iris.StatusOK)
+func status(w http.ResponseWriter, _ *http.Request) {
+	w.WriteHeader(http.StatusOK)
 }
 
 // dashboard page
-func dashboard(ctx *iris.Context) {
-	ctx.MustRender("index.html", nil)
+func dashboard(w http.ResponseWriter, _ *http.Request) {
+	html, err := template.ParseFiles("./dashboard/index.html")
+	tpl := template.Must(html, err)
+	tpl.Execute(w, nil)
 }
 
 // 404 page
-func p404(ctx *iris.Context) {
-	ctx.MustRender("404.html", nil)
+func p404(w http.ResponseWriter, _ *http.Request) {
+	html, err := template.ParseFiles("./dashboard/404.html")
+	tpl := template.Must(html, err)
+	tpl.Execute(w, nil)
 }
 
 // get container metrics
-func getMetrics(ctx *iris.Context) {
-	ctx.JSON(iris.StatusOK, metrics.Get().Get(ctx.Param("id")))
+func getMetrics(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(metrics.Get().Get(mux.Vars(r)["id"])); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 // get stopped containers
-func getStopped(ctx *iris.Context) {
-	ctx.JSON(iris.StatusOK, metrics.Get().GetStoppedContainers())
+func getStopped(w http.ResponseWriter, _ *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(metrics.Get().GetStoppedContainers()); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 // get launched containers
-func getLaunched(ctx *iris.Context) {
-	ctx.JSON(iris.StatusOK, metrics.Get().GetLaunchedContainers())
+func getLaunched(w http.ResponseWriter, _ *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(metrics.Get().GetLaunchedContainers()); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 // get container logs
-func getLogs(ctx *iris.Context) {
-	ctx.JSON(iris.StatusOK, metrics.GetContainerLogs(ctx.Param("id")))
+func getLogs(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(metrics.GetContainerLogs(mux.Vars(r)["id"])); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }

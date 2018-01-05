@@ -2,14 +2,17 @@ package metrics
 
 import (
 	"encoding/json"
-	"github.com/docker/docker/api/types"
-	"github.com/lavrs/dlm/pkg/kit/docker"
-	"github.com/lavrs/dlm/pkg/logger"
+	"fmt"
 	"time"
+
+	"github.com/docker/docker/api/types"
+	"github.com/spacelavr/dlm/pkg/kit/docker"
+	"github.com/spacelavr/dlm/pkg/logger"
 )
 
 // collect metrics (container stats)
 func (m *metrics) collect(id string) {
+	fmt.Println("MAGIC")
 	// set that container launched
 	m.changesMap.Lock()
 	m.changes[id] = struct {
@@ -24,7 +27,10 @@ func (m *metrics) collect(id string) {
 
 	// check for container stopped
 	var stopped = make(chan bool)
-	defer close(stopped)
+	defer func() {
+		fmt.Println("WHIT THIS?")
+		close(stopped)
+	}()
 	go func() {
 		for range time.Tick(time.Second) {
 			if info, err := docker.ContainerInspect(id); err != nil || !info.State.Running {
@@ -48,10 +54,12 @@ func (m *metrics) collect(id string) {
 		select {
 		// container stopped
 		case <-stopped:
+			fmt.Println("ALARM")
 			return
 		default:
 			// parse metrics
 			if err = dec.Decode(&statsJSON); err != nil {
+				fmt.Println("KEK")
 				return
 			}
 			// formatting metrics

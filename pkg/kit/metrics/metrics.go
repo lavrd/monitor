@@ -1,11 +1,12 @@
 package metrics
 
 import (
-	"github.com/docker/cli/cli/command/formatter"
-	"github.com/lavrs/dlm/pkg/kit/docker"
-	"github.com/lavrs/dlm/pkg/logger"
 	"strings"
 	"time"
+
+	"github.com/docker/cli/cli/command/formatter"
+	"github.com/spacelavr/dlm/pkg/kit/docker"
+	"github.com/spacelavr/dlm/pkg/logger"
 )
 
 // init metrics

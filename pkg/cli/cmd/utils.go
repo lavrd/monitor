@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"encoding/json"
+
 	"github.com/docker/cli/cli/command/formatter"
-	h "github.com/lavrs/dlm/pkg/cli/http"
-	"github.com/lavrs/dlm/pkg/context"
-	"github.com/lavrs/dlm/pkg/kit/metrics"
-	"github.com/lavrs/dlm/pkg/logger"
+	h "github.com/spacelavr/dlm/pkg/cli/http"
+	"github.com/spacelavr/dlm/pkg/context"
+	"github.com/spacelavr/dlm/pkg/kit/metrics"
+	"github.com/spacelavr/dlm/pkg/logger"
 )
 
 const api = "/api/"
@@ -77,6 +78,6 @@ func GetLaunchedContainers() ([]string, error) {
 
 // GetAPIStatus returns API status
 func GetAPIStatus() error {
-	_, err := h.GET(context.Get().Address + "/status")
+	_, err := h.GET(context.Get().Address + api + "status")
 	return err
 }

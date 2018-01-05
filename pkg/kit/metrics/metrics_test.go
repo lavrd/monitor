@@ -1,12 +1,14 @@
 package metrics_test
 
 import (
-	"github.com/lavrs/dlm/pkg/kit/docker"
-	m "github.com/lavrs/dlm/pkg/kit/metrics"
-	"github.com/lavrs/dlm/pkg/logger"
-	"github.com/stretchr/testify/assert"
+	//"fmt"
 	"testing"
 	"time"
+
+	"github.com/spacelavr/dlm/pkg/kit/docker"
+	m "github.com/spacelavr/dlm/pkg/kit/metrics"
+	"github.com/spacelavr/dlm/pkg/logger"
+	"github.com/stretchr/testify/assert"
 )
 
 const (
@@ -29,7 +31,7 @@ func init() {
 		logger.Panic(err)
 	}
 
-	m.Get().SetUCListInterval(updInterval)
+	m.Get().SetUContsInterval(updInterval)
 	m.Get().SetUCMetricsInterval(updInterval)
 	m.Get().SetChangesFlushInterval(updInterval)
 	go m.Get().Collect()
@@ -66,7 +68,7 @@ func TestGet(t *testing.T) {
 
 func TestGetSpecifiedContainers(t *testing.T) {
 	assert.Equal(t, "these containers are not running",
-		m.Get().Get(container+" container").Message)
+		m.Get().Get(container + " container").Message)
 }
 
 func TestGetStoppedContainers(t *testing.T) {

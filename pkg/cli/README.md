@@ -27,7 +27,7 @@ GLOBAL OPTIONS:
 ```
 $ dlm logs <container_id>
 ```
-## Stopped contaiers
+## Stopped containers
 ```
 $ dlm stopped
 ```

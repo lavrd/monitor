@@ -1,9 +1,10 @@
 package metrics
 
 import (
-	"github.com/docker/cli/cli/command/formatter"
 	"sync"
 	"time"
+
+	"github.com/docker/cli/cli/command/formatter"
 )
 
 type metricsMap struct {

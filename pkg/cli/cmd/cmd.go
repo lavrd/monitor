@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/lavrs/dlm/pkg/logger"
-	"github.com/olekukonko/tablewriter"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/olekukonko/tablewriter"
+	"github.com/spacelavr/dlm/pkg/logger"
 )
 
 const oops = "Oops! Something went wrong, please try again"

@@ -2,10 +2,11 @@ package docker_test
 
 import (
 	"encoding/json"
-	"github.com/docker/docker/api/types"
-	"github.com/lavrs/dlm/pkg/kit/docker"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/docker/docker/api/types"
+	"github.com/spacelavr/dlm/pkg/kit/docker"
+	"github.com/stretchr/testify/assert"
 )
 
 const (

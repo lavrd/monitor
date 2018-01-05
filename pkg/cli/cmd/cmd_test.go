@@ -2,13 +2,14 @@ package cmd_test
 
 import (
 	"encoding/json"
-	"github.com/docker/cli/cli/command/formatter"
-	"github.com/lavrs/dlm/pkg/cli/cmd"
-	"github.com/lavrs/dlm/pkg/context"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/docker/cli/cli/command/formatter"
+	"github.com/spacelavr/dlm/pkg/cli/cmd"
+	"github.com/spacelavr/dlm/pkg/context"
+	"github.com/stretchr/testify/assert"
 )
 
 const container = "container"
@@ -17,6 +18,7 @@ func TestGetContainerLogs(t *testing.T) {
 	const testLogs = "test logs"
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
 		logs, err := json.Marshal(map[string]string{
 			"logs": testLogs,
 		})

@@ -1,8 +1,8 @@
 package logger
 
 import (
-	"github.com/lavrs/dlm/pkg/context"
 	"github.com/sirupsen/logrus"
+	"github.com/spacelavr/dlm/pkg/context"
 )
 
 // Info print info log

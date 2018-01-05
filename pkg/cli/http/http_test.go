@@ -1,11 +1,12 @@
 package http_test
 
 import (
-	h "github.com/lavrs/dlm/pkg/cli/http"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	h "github.com/spacelavr/dlm/pkg/cli/http"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGET(t *testing.T) {

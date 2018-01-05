@@ -23,7 +23,7 @@ GLOBAL OPTIONS:
 ```
 ## Example
 ```
-$ dlm -p 4222 --ucli 3 --uci 1 -f 10
+$ dlm -p 4222 --ucmi 3 --uci 1 -f 10
 ```
 # API Usage
 ## Get container(s) metrics

@@ -2,15 +2,16 @@ package docker
 
 import (
 	"context"
-	"github.com/docker/docker/api/types"
-	c "github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/client"
-	"github.com/lavrs/dlm/pkg/logger"
 	"io"
 	"io/ioutil"
 	"os"
 	"time"
+
+	"github.com/docker/docker/api/types"
+	c "github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/network"
+	"github.com/docker/docker/client"
+	"github.com/spacelavr/dlm/pkg/logger"
 )
 
 var (

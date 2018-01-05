@@ -1,14 +1,15 @@
 package kit
 
 import (
-	"github.com/lavrs/dlm/pkg/context"
-	m "github.com/lavrs/dlm/pkg/kit/metrics"
-	"github.com/lavrs/dlm/pkg/kit/router"
-	"github.com/lavrs/dlm/pkg/logger"
-	"github.com/urfave/cli"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/spacelavr/dlm/pkg/context"
+	m "github.com/spacelavr/dlm/pkg/kit/metrics"
+	"github.com/spacelavr/dlm/pkg/kit/router"
+	"github.com/spacelavr/dlm/pkg/logger"
+	"github.com/urfave/cli"
 )
 
 // Run start kit
@@ -80,7 +81,7 @@ func Run() {
 
 		// listen and serve
 		fsrv := &http.Server{
-			Handler: router.App(),
+			Handler: router.Router(),
 			Addr:    context.Get().Address,
 		}
 		return fsrv.ListenAndServe()

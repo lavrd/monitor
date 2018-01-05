@@ -2,9 +2,10 @@ package http
 
 import (
 	"errors"
-	"github.com/lavrs/dlm/pkg/logger"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/spacelavr/dlm/pkg/logger"
 )
 
 // GET implementing http get request

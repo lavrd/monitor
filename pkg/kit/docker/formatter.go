@@ -1,10 +1,11 @@
 package docker
 
 import (
-	"github.com/docker/cli/cli/command/formatter"
-	"github.com/docker/docker/api/types"
 	"math"
 	"strings"
+
+	"github.com/docker/cli/cli/command/formatter"
+	"github.com/docker/docker/api/types"
 )
 
 // Formatting returns the basic metrics from all

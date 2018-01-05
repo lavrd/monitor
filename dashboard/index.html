@@ -1,39 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Docker load monitor</title>
+  <meta charset="UTF-8">
 
-    <link href="./static/css/c3.min.css" rel="stylesheet" type="text/css"/>
-    <link href="./static/css/bulma.css" rel="stylesheet" type="text/css"/>
+  <title>Docker load monitor</title>
 
-    <link rel="icon" href="./static/img/favicon.png" type="image/png"/>
+  <link rel="icon" href="./static/img/favicon.png" type="image/png"/>
+
+  <link href="./static/css/c3.min.css" rel="stylesheet" type="text/css"/>
+  <link href="./static/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+  <link href="./static/css/index.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
-<div class="hero is-small">
-    <div class="hero-body">
-        <div class="container">
-            <h1 class="title is-1">
-                Docker load monitor
-            </h1>
+<section class="container">
+  <h1 class="display-4 mt-5 pt-5">
+    Docker load monitor
+  </h1>
 
-            <div class="columns">
-                <div class="column is-half">
-                    <div class="field has-addons">
-                        <input id="containerName" type="text" class="input" placeholder="container name"/>
-                        <button class="button is-info" onclick="show()">GO</button>
-                        <button class="button is-info" onclick="show()">ALL</button>
-                        <button class="button is-danger" onclick="stop()">STOP</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="input-group mb-5">
+    <input id="containerName" type="text" class="form-control" placeholder="Container name">
+
+    <div class="input-group-append">
+      <button class="btn btn-outline-secondary" onclick="show()">GO</button>
+      <button class="btn btn-outline-secondary" onclick="show()">ALL</button>
+      <button class="btn btn-outline-secondary" onclick="stop()">STOP</button>
     </div>
-</div>
+  </div>
 
-<div class="container" id="chart">
-    <div id="alert" class="is-hidden"></div>
-</div>
+  <div id="chart">
+    <div class="text-hide" role="alert" id="alert"/>
+  </div>
+</section>
 
 <script src="./static/js/d3.min.js"></script>
 <script src="./static/js/c3.min.js"></script>
-<script src="./static/js/dms.js"></script>
+<script src="./static/js/index.js"></script>
 </body>

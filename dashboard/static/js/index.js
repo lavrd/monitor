@@ -1,13 +1,14 @@
 // charts update interval
-let interval = null,
-  // chart update interval time
-  updateChartInterval = 1000,
+let interval = null
+
+// chart update interval time
+const updateChartInterval = 3000,
   // api address
   api = 'http://localhost:4222/api/metrics/'
 
 // show charts
-function show() {
-  ids = document.getElementById('containerName')
+const show = () => {
+  const ids = document.getElementById('containerName')
   if (ids.value === '') {
     ids.value = 'all'
   }
@@ -17,9 +18,9 @@ function show() {
 }
 
 // clear all charts
-function clearCharts() {
-  elements = document.getElementsByClassName("temp")
-  for (i = elements.length - 1; i >= 0; i--) {
+const clearCharts = () => {
+  const elements = document.getElementsByClassName("temp")
+  for (let i = elements.length - 1; i >= 0; i--) {
     if (elements[i] && elements[i].parentElement) {
       elements[i].parentElement.removeChild(elements[i])
     }
@@ -27,30 +28,30 @@ function clearCharts() {
 }
 
 // stop / clear charts
-function stop() {
+const stop = () => {
   changeNotification()
   clearInterval(interval)
   clearCharts()
 }
 
 // create chart div
-function createChartDiv(parent, name) {
-  h2 = document.createElement('h2')
+const createChartDiv = (parent, name) => {
+  const h2 = document.createElement('h2')
   h2.innerText = name
   h2.setAttribute('class', 'temp title')
   h2.setAttribute('id', 'h2' + name)
   parent.appendChild(h2)
 
-  div = document.createElement('div')
+  const div = document.createElement('div')
   div.setAttribute('id', name);
   div.setAttribute('class', 'temp');
   parent.appendChild(div)
 }
 
 // remove chart div
-function removeChartDiv(id) {
-  div = document.getElementById(id)
-  h2 = document.getElementById('h2' + id)
+const removeChartDiv = (id) => {
+  const div = document.getElementById(id)
+  const h2 = document.getElementById('h2' + id)
   if (div && div.parentElement) {
     div.parentElement.removeChild(div)
     h2.parentElement.removeChild(h2)
@@ -58,19 +59,19 @@ function removeChartDiv(id) {
 }
 
 // show and update charts
-function showCharts(ids) {
+const showCharts = (ids) => {
   let chart = new Map(),
     cpu = new Map(),
     mem = new Map(),
     time = new Map()
 
-  return setInterval(function () {
+  return setInterval(() => {
     fetch(api + ids).then(response => {
       return response.json()
     }).then(data => {
       // if there is stopped containers
       if (data.stopped) {
-        for (i in data.stopped) {
+        for (let i in data.stopped) {
           if (ids.includes(data.stopped[i]) || ids === 'all') {
             // remove container div
             removeChartDiv(data.stopped[i])
@@ -89,8 +90,8 @@ function showCharts(ids) {
       }
 
       // update charts
-      for (i in data.metrics) {
-        id = data.metrics[i].Name
+      for (let i in data.metrics) {
+        const id = data.metrics[i].Name
 
         // if container chart already exists
         if (chart.has(id)) {
@@ -136,8 +137,8 @@ function showCharts(ids) {
 }
 
 // update cpu, mem, time data array
-function setData(data, type, value) {
-  if (data.length === 25) {
+const setData = (data, type, value) => {
+  if (data.length === 10) {
     data.shift()
     data.shift()
     data.unshift(type)
@@ -148,24 +149,23 @@ function setData(data, type, value) {
 }
 
 // change notification status
-function changeNotification(error) {
-  alertErrorText = document.getElementById('alert')
+const changeNotification = (error) => {
+  const alertErrorText = document.getElementById('alert')
 
   if (!error) {
-    alertErrorText.setAttribute('class', 'is-hidden')
+    alertErrorText.setAttribute('class', 'text-hide')
     return
   }
 
-  alertErrorText.setAttribute('class', 'notification is-danger')
+  alertErrorText.setAttribute('class', 'alert alert-danger')
   alertErrorText.innerText = error
-  console.log("error: ", error)
 }
 
 // create new chart
-function createChart(id, time, cpu, mem) {
-  return chart = c3.generate({
+const createChart = (id, time, cpu, mem) => {
+  return c3.generate({
     bindto: '#' + id,
-    data: {x: 'time', columns: [time, cpu, mem]},
+    data: {x: 'time', columns: [time, cpu, mem], type: 'spline'},
     axis: {x: {type: 'timeseries', tick: {format: '%H:%M:%S'}}, y: {tick: {format: d3.format(',.2f')}, label: '%'}},
     grid: {x: {show: !0,}, y: {show: !0,}}
   })
