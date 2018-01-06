@@ -104,7 +104,7 @@ Content-Type: application/json
 ## Get API status
 REQUEST
 ```
-GET /status HTTP/1.1
+GET /api/status HTTP/1.1
 ```
 RESPONSE
 ```
