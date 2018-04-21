@@ -3,9 +3,9 @@ package cli
 import (
 	"os"
 
-	"github.com/spacelavr/dlm/pkg/cli/cmd"
-	"github.com/spacelavr/dlm/pkg/context"
-	"github.com/spacelavr/dlm/pkg/logger"
+	"github.com/spacelavr/monitor/pkg/cli/cmd"
+	"github.com/spacelavr/monitor/pkg/context"
+	"github.com/spacelavr/monitor/pkg/logger"
 	"github.com/urfave/cli"
 )
 
@@ -27,7 +27,7 @@ func Run() {
 	cli.VersionFlag = cli.BoolFlag{Name: "version, V", Usage: "print the version"}
 
 	app := cli.NewApp()
-	app.Name = "dlm"
+	app.Name = "monitor"
 	app.Usage = "Docker load monitor"
 	app.Version = "0.1.0"
 

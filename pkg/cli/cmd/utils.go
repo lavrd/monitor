@@ -4,29 +4,13 @@ import (
 	"encoding/json"
 
 	"github.com/docker/cli/cli/command/formatter"
-	h "github.com/spacelavr/dlm/pkg/cli/http"
-	"github.com/spacelavr/dlm/pkg/context"
-	"github.com/spacelavr/dlm/pkg/kit/metrics"
-	"github.com/spacelavr/dlm/pkg/logger"
+	h "github.com/spacelavr/monitor/pkg/cli/http"
+	"github.com/spacelavr/monitor/pkg/context"
+	"github.com/spacelavr/monitor/pkg/monitor/metrics"
+	"github.com/spacelavr/monitor/pkg/logger"
 )
 
 const api = "/api/"
-
-// GetContainerLogs returns container logs
-func GetContainerLogs(id string) (string, error) {
-	body, err := h.GET(context.Get().Address + api + "logs/" + id)
-	if err != nil {
-		return "", err
-	}
-
-	var api metrics.API
-	if err = json.Unmarshal(body, &api); err != nil {
-		return "", err
-	}
-
-	logger.Info(id, "container logs", api.Logs)
-	return api.Logs, nil
-}
 
 // GetContainersMetrics returns containers metrics
 func GetContainersMetrics(id string) ([]formatter.ContainerStats, error) {

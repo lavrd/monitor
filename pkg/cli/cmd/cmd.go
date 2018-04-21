@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/olekukonko/tablewriter"
-	"github.com/spacelavr/dlm/pkg/logger"
 )
 
 const oops = "Oops! Something went wrong, please try again"

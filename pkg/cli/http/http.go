@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/spacelavr/dlm/pkg/logger"
+	"github.com/spacelavr/monitor/pkg/logger"
 )
 
 // GET implementing http get request

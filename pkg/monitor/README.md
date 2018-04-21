@@ -1,10 +1,10 @@
 # Run kit
 ```
 NAME:
-   dlm - Docker load monitor
+   monitor - Docker load monitor
 
 USAGE:
-   dlm [global options] command [command options] [arguments...]
+   monitor [global options] command [command options] [arguments...]
 
 VERSION:
    0.1.0
@@ -23,7 +23,7 @@ GLOBAL OPTIONS:
 ```
 ## Example
 ```
-$ dlm -p 4222 --ucmi 3 --uci 1 -f 10
+$ monitor -p 4222 --ucmi 3 --uci 1 -f 10
 ```
 # API Usage
 ## Get container(s) metrics

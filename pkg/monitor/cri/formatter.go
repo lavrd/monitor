@@ -1,4 +1,4 @@
-package docker
+package cri
 
 import (
 	"math"
@@ -9,7 +9,7 @@ import (
 )
 
 // Formatting returns the basic metrics from all
-func Formatting(id string, statsJSON *types.StatsJSON) *formatter.ContainerStats {
+func (r *Cri) Formatting(id string, statsJSON *types.StatsJSON) *formatter.ContainerStats {
 	var stats formatter.ContainerStats
 
 	read, write := parseBlockIO(statsJSON.BlkioStats)

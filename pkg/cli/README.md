@@ -1,10 +1,10 @@
 # CLI Usage
 ```
 NAME:
-   dlm - Docker load monitor
+   monitor - Docker load monitor
 
 USAGE:
-   dlm [global options] command [command options] [arguments...]
+   monitor [global options] command [command options] [arguments...]
 
 VERSION:
    0.1.0
@@ -25,22 +25,22 @@ GLOBAL OPTIONS:
 ```
 ## Container logs
 ```
-$ dlm logs <container_id>
+$ monitor logs <container_id>
 ```
 ## Stopped containers
 ```
-$ dlm stopped
+$ monitor stopped
 ```
 ## Launched containers
 ```
-$ dlm launched
+$ monitor launched
 ```
 ## Containers metrics
 ```
-$ dlm metrics <container_id> <container_id>
-$ dlm --addr http://localhost:4222 metrics all
+$ monitor metrics <container_id> <container_id>
+$ monitor --addr http://localhost:4222 metrics all
 ```
 ## API status
 ```
-$ dlm status
+$ monitor status
 ```
