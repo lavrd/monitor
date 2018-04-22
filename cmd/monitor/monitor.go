@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/spacelavr/monitor/pkg/log"
 	"github.com/spacelavr/monitor/pkg/monitor"
-	"github.com/spacelavr/pandora/pkg/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -39,7 +39,7 @@ func init() {
 	CLI.Flags().IntVarP(&updContainersInterval, "CInterval", "c", 3, "set update containers interval")
 	CLI.Flags().IntVarP(&updCOntainersMetricsInterval, "CMInterval", "m", 1, "set update containers metrics interval")
 	CLI.Flags().IntVarP(&changesFlushInterval, "FInterval", "f", 1, "set changes flush interval")
-	CLI.Flags().BoolVarP(&verbose, "verbose", "v", false, "set verbose output")
+	CLI.Flags().BoolVarP(&verbose, "verbose", "v", true, "set verbose output")
 
 	err := viper.BindPFlag("port", CLI.Flags().Lookup("port"))
 	if err != nil {

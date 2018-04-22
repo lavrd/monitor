@@ -1,7 +1,7 @@
 package env
 
 import (
-	"github.com/spacelavr/monitor/pkg/monitor/cri"
+	"github.com/spacelavr/monitor/pkg/cri"
 	"github.com/spacelavr/monitor/pkg/monitor/metrics"
 )
 

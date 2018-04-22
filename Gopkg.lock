@@ -24,32 +24,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/agl/ed25519"
-  packages = [
-    ".",
-    "edwards25519"
-  ]
-  revision = "5312a61534124124185d41f09206b9fef1d88403"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/arangodb/go-driver"
-  packages = [
-    ".",
-    "cluster",
-    "http",
-    "util"
-  ]
-  revision = "91863909484aa5f5f9549458db53819ea71f0fb5"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/arangodb/go-velocypack"
-  packages = ["."]
-  revision = "c899a2a2271f97f297fd70afd031e5ffb9497f83"
-
-[[projects]]
-  branch = "master"
   name = "github.com/beorn7/perks"
   packages = ["quantile"]
   revision = "3a771d992973f24aa725d07868b467d1ddfceafb"
@@ -57,44 +31,24 @@
 [[projects]]
   branch = "master"
   name = "github.com/containerd/continuity"
-  packages = ["pathdriver"]
-  revision = "c6cef34830231743494fe2969284df7b82cc0ad0"
-
-[[projects]]
-  name = "github.com/dgrijalva/jwt-go"
-  packages = ["."]
-  revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
-  version = "v3.2.0"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/docker/cli"
   packages = [
-    "cli",
-    "cli/command",
-    "cli/command/formatter",
-    "cli/command/inspect",
-    "cli/config",
-    "cli/config/configfile",
-    "cli/config/credentials",
-    "cli/flags",
-    "cli/manifest/store",
-    "cli/manifest/types",
-    "cli/registry/client",
-    "cli/trust",
-    "opts",
-    "templates"
+    "devices",
+    "driver",
+    "pathdriver",
+    "sysx"
   ]
-  revision = "6c9232a5682cbfffc6a53ebb8ec9bfbb4b55381d"
+  revision = "c6cef34830231743494fe2969284df7b82cc0ad0"
 
 [[projects]]
   branch = "master"
   name = "github.com/docker/distribution"
   packages = [
     ".",
+    "context",
     "digestset",
     "manifest",
     "manifest/manifestlist",
+    "manifest/schema1",
     "manifest/schema2",
     "metrics",
     "reference",
@@ -131,41 +85,45 @@
     "api/types/versions",
     "api/types/volume",
     "client",
+    "daemon/graphdriver",
+    "distribution",
+    "distribution/metadata",
+    "distribution/xfer",
+    "dockerversion",
     "errdefs",
+    "image",
+    "image/v1",
+    "layer",
+    "oci",
     "pkg/archive",
+    "pkg/chrootarchive",
+    "pkg/containerfs",
     "pkg/fileutils",
-    "pkg/homedir",
     "pkg/idtools",
     "pkg/ioutils",
     "pkg/jsonmessage",
     "pkg/longpath",
     "pkg/mount",
+    "pkg/parsers/kernel",
+    "pkg/plugingetter",
+    "pkg/plugins",
+    "pkg/plugins/transport",
     "pkg/pools",
+    "pkg/progress",
+    "pkg/reexec",
     "pkg/stringid",
+    "pkg/symlink",
     "pkg/system",
     "pkg/tarsum",
     "pkg/term",
     "pkg/term/windows",
+    "pkg/useragent",
+    "plugin/v2",
+    "reference",
     "registry",
     "registry/resumable"
   ]
   revision = "53982e3fc1642f2605189cea48bc6de7b9318611"
-
-[[projects]]
-  name = "github.com/docker/docker-credential-helpers"
-  packages = [
-    "client",
-    "credentials",
-    "pass"
-  ]
-  revision = "d68f9aeca33f5fd3f08eeae5e9d175edf4e731d1"
-  version = "v0.6.0"
-
-[[projects]]
-  name = "github.com/docker/go"
-  packages = ["canonical/json"]
-  revision = "62e5ec7cf43f795986ec658df7cb317255772993"
-  version = "v1.5.1-1"
 
 [[projects]]
   name = "github.com/docker/go-connections"
@@ -190,6 +148,12 @@
   version = "v0.3.3"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/docker/libtrust"
+  packages = ["."]
+  revision = "aabc10ec26b754e797f9028f4589c5b7bd90dc20"
+
+[[projects]]
   name = "github.com/fsnotify/fsnotify"
   packages = ["."]
   revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
@@ -212,12 +176,6 @@
   packages = ["."]
   revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
   version = "v1.1"
-
-[[projects]]
-  name = "github.com/gorilla/handlers"
-  packages = ["."]
-  revision = "90663712d74cb411cbef281bc1e08c19d1a76145"
-  version = "v1.3.0"
 
 [[projects]]
   name = "github.com/gorilla/mux"
@@ -255,10 +213,10 @@
   version = "v1.7.6"
 
 [[projects]]
-  name = "github.com/mattn/go-runewidth"
+  name = "github.com/mattn/go-shellwords"
   packages = ["."]
-  revision = "9e777a8366cce605130a531d2cd6363d07ad7317"
-  version = "v0.0.2"
+  revision = "02e3cf038dcea8290e44424da473dd12be796a8a"
+  version = "v1.0.3"
 
 [[projects]]
   name = "github.com/matttproud/golang_protobuf_extensions"
@@ -268,37 +226,9 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/miekg/pkcs11"
-  packages = ["."]
-  revision = "05bded61edae2ff9358deca53276738020b926ea"
-
-[[projects]]
-  branch = "master"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
   revision = "00c29f56e2386353d58c599509e8dc3801b0d716"
-
-[[projects]]
-  name = "github.com/nats-io/go-nats"
-  packages = [
-    ".",
-    "encoders/builtin",
-    "util"
-  ]
-  revision = "062418ea1c2181f52dc0f954f6204370519a868b"
-  version = "v1.5.0"
-
-[[projects]]
-  name = "github.com/nats-io/nuid"
-  packages = ["."]
-  revision = "289cccf02c178dc782430d534e3c1f5b72af807f"
-  version = "v1.0.0"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/olekukonko/tablewriter"
-  packages = ["."]
-  revision = "d5dd8a50526aadb3d5f2c9b5233277bc2db90e88"
 
 [[projects]]
   name = "github.com/opencontainers/go-digest"
@@ -318,11 +248,19 @@
 [[projects]]
   name = "github.com/opencontainers/runc"
   packages = [
+    "libcontainer/configs",
+    "libcontainer/devices",
     "libcontainer/system",
     "libcontainer/user"
   ]
-  revision = "baf6536d6259209c3edfa2b22237af82942d3dfa"
-  version = "v0.1.1"
+  revision = "1a124e9c2da68c867ed2c4f4ff19f0cd95cda0cd"
+  version = "v0.0.8"
+
+[[projects]]
+  name = "github.com/opencontainers/runtime-spec"
+  packages = ["specs-go"]
+  revision = "4e3b9264a330d094b0386c3703c5f379119711e8"
+  version = "v1.0.1"
 
 [[projects]]
   name = "github.com/pelletier/go-toml"
@@ -373,58 +311,10 @@
   revision = "8b1c2da0d56deffdbb9e48d4414b4e674bd8083e"
 
 [[projects]]
-  name = "github.com/satori/go.uuid"
-  packages = ["."]
-  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
-  version = "v1.2.0"
-
-[[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
   version = "v1.0.5"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/spacelavr/pandora"
-  packages = [
-    "pkg/api",
-    "pkg/api/env",
-    "pkg/api/events",
-    "pkg/api/routes",
-    "pkg/api/routes/handlers",
-    "pkg/api/routes/request",
-    "pkg/broker",
-    "pkg/core",
-    "pkg/core/env",
-    "pkg/core/events",
-    "pkg/core/runtime",
-    "pkg/discovery",
-    "pkg/discovery/env",
-    "pkg/discovery/http/routes",
-    "pkg/discovery/http/routes/handlers",
-    "pkg/distribution",
-    "pkg/log",
-    "pkg/node",
-    "pkg/node/env",
-    "pkg/node/events",
-    "pkg/node/runtime",
-    "pkg/storage",
-    "pkg/types",
-    "pkg/utils/crypto/bcrypt",
-    "pkg/utils/crypto/jwt",
-    "pkg/utils/crypto/rsa",
-    "pkg/utils/crypto/sha256",
-    "pkg/utils/errors",
-    "pkg/utils/filepath",
-    "pkg/utils/generator",
-    "pkg/utils/http",
-    "pkg/utils/http/middleware",
-    "pkg/utils/http/response",
-    "pkg/utils/mail",
-    "pkg/utils/validator"
-  ]
-  revision = "c2dfe57a65238db30e778ab47bf7527c76381ffc"
 
 [[projects]]
   name = "github.com/spf13/afero"
@@ -466,41 +356,19 @@
   version = "v1.0.2"
 
 [[projects]]
-  name = "github.com/theupdateframework/notary"
+  name = "github.com/vbatts/tar-split"
   packages = [
-    ".",
-    "client",
-    "client/changelist",
-    "cryptoservice",
-    "passphrase",
-    "storage",
-    "trustmanager",
-    "trustmanager/yubikey",
-    "trustpinning",
-    "tuf",
-    "tuf/data",
-    "tuf/signed",
-    "tuf/utils",
-    "tuf/validation"
+    "archive/tar",
+    "tar/asm",
+    "tar/storage"
   ]
-  revision = "d6e1431feb32348e0650bf7551ac5cffd01d857b"
-  version = "v0.6.1"
-
-[[projects]]
-  name = "github.com/urfave/cli"
-  packages = ["."]
-  revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
-  version = "v1.20.0"
+  revision = "38ec4ddb06dedbea0a895c4848b248eb38af221b"
+  version = "v0.10.2"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
-  packages = [
-    "bcrypt",
-    "blowfish",
-    "pbkdf2",
-    "ssh/terminal"
-  ]
+  packages = ["ssh/terminal"]
   revision = "e73bf333ef8920dbb52ad18d4bd38ad9d9bc76d7"
 
 [[projects]]
@@ -519,7 +387,8 @@
   name = "golang.org/x/sys"
   packages = [
     "unix",
-    "windows"
+    "windows",
+    "windows/registry"
   ]
   revision = "79b0c6888797020a994db17c8510466c72fe75d9"
 
@@ -531,11 +400,16 @@
     "internal/ucd",
     "transform",
     "unicode/cldr",
-    "unicode/norm",
-    "width"
+    "unicode/norm"
   ]
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
   version = "v0.3.0"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/time"
+  packages = ["rate"]
+  revision = "fbb02b2291d28baffd63558aa44b4b56f178d650"
 
 [[projects]]
   name = "gopkg.in/yaml.v2"
@@ -546,6 +420,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f554c207286624a8b8de4e10721eff3fd749351875532cc9fae4655ea1e6a58d"
+  inputs-digest = "ee1aced96924c9c2dc9f9e096597e32a8d3b06148680c7d32ed9c73330f25b17"
   solver-name = "gps-cdcl"
   solver-version = 1

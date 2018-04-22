@@ -1,60 +1,52 @@
 package handlers
 
 import (
+	"encoding/json"
+	"html/template"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/spacelavr/monitor/pkg/log"
+	"github.com/spacelavr/monitor/pkg/monitor/env"
 )
 
-// todo write response 200 func for all handlers
-
-// get API status
-func status(w http.ResponseWriter, _ *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
-
-// dashboard page
-func dashboard(w http.ResponseWriter, _ *http.Request) {
+func DashboardH(w http.ResponseWriter, _ *http.Request) {
 	html, err := template.ParseFiles("./dashboard/index.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	tpl := template.Must(html, err)
-	tpl.Execute(w, nil)
+
+	err = tpl.Execute(w, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-// 404 page
-func p404(w http.ResponseWriter, _ *http.Request) {
+func P404H(w http.ResponseWriter, _ *http.Request) {
 	html, err := template.ParseFiles("./dashboard/404.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	tpl := template.Must(html, err)
-	tpl.Execute(w, nil)
-}
 
-// get container metrics
-func getMetrics(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(metrics.Get().Get(mux.Vars(r)["id"])); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+	err = tpl.Execute(w, nil)
+	if err != nil {
+		log.Fatal(err)
 	}
 }
 
-// get stopped containers
-func getStopped(w http.ResponseWriter, _ *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(metrics.Get().GetStoppedContainers()); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-}
+func MetricsH(w http.ResponseWriter, r *http.Request) {
+	var (
+		id      = mux.Vars(r)["id"]
+		m       = env.GetMetrics()
+		metrics = m.Get(id)
+	)
 
-// get launched containers
-func getLaunched(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(metrics.Get().GetLaunchedContainers()); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-}
-
-// get container logs
-func getLogs(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(metrics.GetContainerLogs(mux.Vars(r)["id"])); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+	if err := json.NewEncoder(w).Encode(metrics); err != nil {
+		log.Fatal(err)
 	}
 }

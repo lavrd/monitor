@@ -5,15 +5,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/docker/cli/cli/command/formatter"
+	"github.com/spacelavr/monitor/pkg/cri"
 	"github.com/spacelavr/monitor/pkg/log"
-	"github.com/spacelavr/monitor/pkg/monitor/env"
 	"github.com/spf13/viper"
 )
 
 type MetricsMap struct {
 	sync.Mutex
-	Metrics map[string]*formatter.ContainerStats
+	Metrics map[string]*cri.ContainerStats
 }
 
 type ChangesMap struct {
@@ -30,6 +29,8 @@ type Change struct {
 
 // type for collect metrics
 type Metrics struct {
+	cri *cri.Cri
+
 	*MetricsMap
 	*ChangesMap
 	// check for already collect metrics
@@ -44,48 +45,38 @@ type Metrics struct {
 
 // todo rename
 type GeneralInfo struct {
-	Metrics  []*formatter.ContainerStats `json:"metrics"`
-	Launched []string                    `json:"launched"`
-	Stopped  []string                    `json:"stopped"`
-	Message  string                      `json:"message"`
+	Metrics  []*cri.ContainerStats `json:"metrics,omitempty"`
+	Launched []string              `json:"launched,omitempty"`
+	Stopped  []string              `json:"stopped,omitempty"`
+	Message  string                `json:"message,omitempty"`
 }
 
-func New() *Metrics {
+func New(r *cri.Cri) *Metrics {
 	return &Metrics{
+		cri: r,
 		MetricsMap: &MetricsMap{
-			Metrics: make(map[string]*formatter.ContainerStats),
+			Metrics: make(map[string]*cri.ContainerStats),
 		},
 		ChangesMap: &ChangesMap{
 			Changes: make(map[string]*Change),
 		},
 		CInterval:  time.Second * time.Duration(viper.GetInt("CInterval")),
-		CMInterval: time.Second * time.Duration(viper.GetInt("CMIterval")),
+		CMInterval: time.Second * time.Duration(viper.GetInt("CMInterval")),
 		FInterval:  time.Second * time.Duration(viper.GetInt("FInterval")),
 	}
 }
 
 // Collect collect metrics (check for new containers)
 func (m *Metrics) Collect() error {
-	var (
-		cri = env.GetCri()
-	)
 	// if metrics already collects, returns
 	if m.Started {
 		return nil
 	}
 	m.Started = true
 
-	// wait for docker connection
-	for range time.Tick(time.Second) {
-		if err := cri.Ping(); err == nil {
-			break
-		}
-		log.Debug("trying to connect to docker daemon...")
-	}
-
 	// check for new containers
 	for range time.Tick(m.CInterval) {
-		containers, err := cri.ContainerList()
+		containers, err := m.cri.ContainerList()
 		if err != nil {
 			return err
 		}
@@ -102,12 +93,14 @@ func (m *Metrics) Collect() error {
 			}
 		}
 	}
+
+	return nil
 }
 
 // Get returns general info about containers metrics
 func (m *Metrics) Get(id string) *GeneralInfo {
 	var (
-		metrics                []*formatter.ContainerStats
+		metrics                []*cri.ContainerStats
 		ids, launched, stopped []string
 		isNotExist             = 0
 	)

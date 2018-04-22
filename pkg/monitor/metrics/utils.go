@@ -2,19 +2,16 @@ package metrics
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/spacelavr/monitor/pkg/log"
-	"github.com/spacelavr/monitor/pkg/monitor/env"
 )
 
 // collect metrics (container stats)
 func (m *Metrics) collect(id string) error {
-	var (
-		cri = env.GetCri()
-	)
-
+	log.Debug(1)
 	// set that container launched
 	m.ChangesMap.Lock()
 	m.Changes[id] = &Change{Status: true, Lifetime: time.Now()}
@@ -31,7 +28,7 @@ func (m *Metrics) collect(id string) error {
 	}()
 	go func() {
 		for range time.Tick(time.Second) {
-			if info, err := cri.ContainerInspect(id); err != nil || !info.State.Running {
+			if info, err := m.cri.ContainerInspect(id); err != nil || !info.State.Running {
 				stopped <- true
 				return
 			}
@@ -39,7 +36,7 @@ func (m *Metrics) collect(id string) error {
 	}()
 
 	// get container stats channel
-	reader, err := cri.ContainerStats(id)
+	reader, err := m.cri.ContainerStats(id)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -53,14 +50,18 @@ func (m *Metrics) collect(id string) error {
 		select {
 		// container stopped
 		case <-stopped:
+
 			return nil
 		default:
 			// parse metrics
 			if err = dec.Decode(&statsJSON); err != nil {
 				return nil
 			}
+
+			fmt.Println("cyka", statsJSON.NumProcs)
+
 			// formatting metrics
-			metrics := cri.Formatting(id, statsJSON)
+			metrics := m.cri.Formatting(id, statsJSON)
 
 			// update metrics
 			m.MetricsMap.Lock()
@@ -68,6 +69,8 @@ func (m *Metrics) collect(id string) error {
 			m.MetricsMap.Unlock()
 		}
 	}
+
+	return nil
 }
 
 // remove container from metrics map
@@ -86,6 +89,8 @@ func (m *Metrics) setContainerStoppedState(id string) {
 
 func (m *Metrics) parseChanges() (launched, stopped []string) {
 	// parse changes
+
+	fmt.Println(m)
 	if len(m.Changes) != 0 {
 		for id, status := range m.Changes {
 			if status.Status {

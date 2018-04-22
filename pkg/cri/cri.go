@@ -17,7 +17,7 @@ type Cri struct {
 
 // New returns new runtime
 func New() *Cri {
-	cli, err := client.NewClientWithOpts(client.FromEnv)
+	cli, err := client.NewEnvClient()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,17 +28,6 @@ func New() *Cri {
 		cli,
 		ctx,
 	}
-}
-
-// Ping check docker connection
-func (r *Cri) Ping() error {
-	_, err := r.cli.Ping(r.ctx)
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-
-	return nil
 }
 
 // ContainerInspect returns container info
