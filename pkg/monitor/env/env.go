@@ -21,11 +21,3 @@ func SetMetrics(m *metrics.Metrics) {
 func GetMetrics() *metrics.Metrics {
 	return e.metrics
 }
-
-func SetCri(cri *cri.Cri) {
-	e.cri = cri
-}
-
-func GetCri() *cri.Cri {
-	return e.cri
-}

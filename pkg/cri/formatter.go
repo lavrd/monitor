@@ -1,7 +1,6 @@
 package cri
 
 import (
-	"fmt"
 	"math"
 	"strings"
 
@@ -23,7 +22,6 @@ type ContainerStats struct {
 
 // Formatting returns the basic metrics from all
 func (r *Cri) Formatting(id string, s *types.StatsJSON) *ContainerStats {
-
 	cs := &ContainerStats{
 		Name:        id,
 		Id:          s.ID,
@@ -68,10 +66,8 @@ func (s *ContainerStats) network(network map[string]types.NetworkStats) {
 // parse cpu (returns cpu in percentages)
 func (cs *ContainerStats) cpu(s *types.StatsJSON) {
 	var (
-		cpuPercent = 0.0
-
-		cpuDelta = float64(s.CPUStats.CPUUsage.TotalUsage) - float64(s.PreCPUStats.CPUUsage.TotalUsage)
-
+		cpuPercent  = 0.0
+		cpuDelta    = float64(s.CPUStats.CPUUsage.TotalUsage) - float64(s.PreCPUStats.CPUUsage.TotalUsage)
 		systemDelta = float64(s.CPUStats.SystemUsage) - float64(s.PreCPUStats.SystemUsage)
 		onlineCPUs  = float64(s.CPUStats.OnlineCPUs)
 	)
@@ -80,13 +76,13 @@ func (cs *ContainerStats) cpu(s *types.StatsJSON) {
 		onlineCPUs = float64(len(s.CPUStats.CPUUsage.PercpuUsage))
 	}
 	if systemDelta > 0.0 && cpuDelta > 0.0 {
-		cpuPercent = (cpuDelta / systemDelta) * onlineCPUs * 100.0
-		fmt.Println(cpuPercent)
+		cs.CPUPercentage = (cpuDelta / systemDelta) * onlineCPUs * 100.0
 	}
-	fmt.Println("bliat")
+
+	cs.CPUPercentage = cpuPercent
 }
 
-// parse r/w blks metrics
+// parse r/w metrics
 func (cs *ContainerStats) io(IOStats types.BlkioStats) {
 	var (
 		blkRead, blkWrite uint64

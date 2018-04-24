@@ -13,23 +13,40 @@
 </head>
 
 <body>
-<section class="container">
-  <h1 class="display-4 mt-5 pt-5">
-    Docker load monitor
-  </h1>
+<header class="container">
+  <div class="d-flex align-items-baseline justify-content-between">
+    <h1
+      class="display-4 mt-5 pt-5 text-muted"
+    >
+      Monitor
+    </h1>
 
+    <div>
+      <span
+        id="status"
+        class="badge badge-secondary"
+      >
+        STATUS
+      </span>
+    </div>
+  </div>
+
+  <div class="text-hide alert alert-info" id="alert"></div>
+</header>
+
+<section class="container">
   <div class="input-group mb-5">
-    <input id="containerName" type="text" class="form-control" placeholder="Container name">
+    <input id="name" type="text" class="form-control" placeholder="Container name">
 
     <div class="input-group-append">
-      <button class="btn btn-outline-secondary" onclick="show()">GO</button>
-      <button class="btn btn-outline-secondary" onclick="show()">ALL</button>
+      <button class="btn btn-outline-secondary" onclick="start()">GO</button>
+      <button class="btn btn-outline-secondary" onclick="start(true)">ALL</button>
       <button class="btn btn-outline-secondary" onclick="stop()">STOP</button>
     </div>
   </div>
 
   <div id="chart">
-    <div class="text-hide" role="alert" id="alert"></div>
+    <div class="row"></div>
   </div>
 </section>
 

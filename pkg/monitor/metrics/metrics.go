@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/spacelavr/monitor/pkg/cri"
-	"github.com/spacelavr/monitor/pkg/log"
+	"github.com/spacelavr/monitor/pkg/utils/log"
 	"github.com/spf13/viper"
 )
 
@@ -15,40 +15,23 @@ type MetricsMap struct {
 	Metrics map[string]*cri.ContainerStats
 }
 
-type ChangesMap struct {
-	sync.Mutex
-	Changes map[string]*Change
-}
-
-type Change struct {
-	// stopped or launched
-	Status bool
-	// change lifetime
-	Lifetime time.Time
-}
-
 // type for collect metrics
 type Metrics struct {
 	cri *cri.Cri
 
 	*MetricsMap
-	*ChangesMap
 	// check for already collect metrics
 	Started bool
 	// update containers interval
 	CInterval time.Duration
 	// update container metrics interval
 	CMInterval time.Duration
-	// changes map flush interval
-	FInterval time.Duration
 }
 
 // todo rename
 type GeneralInfo struct {
-	Metrics  []*cri.ContainerStats `json:"metrics,omitempty"`
-	Launched []string              `json:"launched,omitempty"`
-	Stopped  []string              `json:"stopped,omitempty"`
-	Message  string                `json:"message,omitempty"`
+	Metrics []*cri.ContainerStats `json:"metrics,omitempty"`
+	Alert   string                `json:"alert,omitempty"`
 }
 
 func New(r *cri.Cri) *Metrics {
@@ -57,12 +40,8 @@ func New(r *cri.Cri) *Metrics {
 		MetricsMap: &MetricsMap{
 			Metrics: make(map[string]*cri.ContainerStats),
 		},
-		ChangesMap: &ChangesMap{
-			Changes: make(map[string]*Change),
-		},
 		CInterval:  time.Second * time.Duration(viper.GetInt("CInterval")),
 		CMInterval: time.Second * time.Duration(viper.GetInt("CMInterval")),
-		FInterval:  time.Second * time.Duration(viper.GetInt("FInterval")),
 	}
 }
 
@@ -100,9 +79,9 @@ func (m *Metrics) Collect() error {
 // Get returns general info about containers metrics
 func (m *Metrics) Get(id string) *GeneralInfo {
 	var (
-		metrics                []*cri.ContainerStats
-		ids, launched, stopped []string
-		isNotExist             = 0
+		metrics    []*cri.ContainerStats
+		ids        []string
+		isNotExist = 0
 	)
 
 	// parse id (all / one / ... containers)
@@ -117,16 +96,11 @@ func (m *Metrics) Get(id string) *GeneralInfo {
 	}
 	log.Debug("get", ids, "containers metrics")
 
-	// parse changes
-	launched, stopped = m.parseChanges()
-
 	// return if no running containers
 	if len(m.Metrics) == 0 {
 		log.Debug("no running containers")
 		return &GeneralInfo{
-			Launched: launched,
-			Stopped:  stopped,
-			Message:  "no running containers",
+			Alert: "no running containers",
 		}
 	}
 
@@ -144,17 +118,12 @@ func (m *Metrics) Get(id string) *GeneralInfo {
 	if isNotExist == len(ids) {
 		log.Debug("these containers", ids, "are not running")
 		return &GeneralInfo{
-			Launched: launched,
-			Stopped:  stopped,
-			Message:  "these containers are not running",
+			Alert: "these containers are not running",
 		}
 	}
 
 	// returns metrics
-	log.Debug(ids, "metrics", metrics)
 	return &GeneralInfo{
-		Metrics:  metrics,
-		Launched: launched,
-		Stopped:  stopped,
+		Metrics: metrics,
 	}
 }

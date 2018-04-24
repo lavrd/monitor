@@ -8,10 +8,10 @@ import (
 	"syscall"
 
 	"github.com/spacelavr/monitor/pkg/cri"
-	"github.com/spacelavr/monitor/pkg/log"
 	"github.com/spacelavr/monitor/pkg/monitor/env"
 	"github.com/spacelavr/monitor/pkg/monitor/metrics"
 	"github.com/spacelavr/monitor/pkg/monitor/router"
+	"github.com/spacelavr/monitor/pkg/utils/log"
 	"github.com/spf13/viper"
 )
 
@@ -25,6 +25,7 @@ func Daemon() {
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
 	m := metrics.New(cri.New())
+
 	env.SetMetrics(m)
 
 	go func() {

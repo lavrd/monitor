@@ -1,13 +1,14 @@
 package handlers
 
 import (
-	"encoding/json"
+	"fmt"
 	"html/template"
 	"net/http"
+	"time"
 
-	"github.com/gorilla/mux"
-	"github.com/spacelavr/monitor/pkg/log"
 	"github.com/spacelavr/monitor/pkg/monitor/env"
+	"github.com/spacelavr/monitor/pkg/utils/log"
+	"golang.org/x/net/websocket"
 )
 
 func DashboardH(w http.ResponseWriter, _ *http.Request) {
@@ -38,15 +39,26 @@ func P404H(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func MetricsH(w http.ResponseWriter, r *http.Request) {
+func MetricsH(ws *websocket.Conn) {
 	var (
-		id      = mux.Vars(r)["id"]
-		m       = env.GetMetrics()
-		metrics = m.Get(id)
+		m   = env.GetMetrics()
+		ids = make([]byte, 512)
 	)
 
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(metrics); err != nil {
-		log.Fatal(err)
+	n, err := ws.Read(ids)
+	if err != nil {
+		return
+	}
+
+	fmt.Println(string(ids[:n]))
+
+	for range time.Tick(time.Second * 1) {
+		metrics := m.Get(string(ids[:n]))
+
+		fmt.Println(metrics)
+
+		if err := websocket.JSON.Send(ws, metrics); err != nil {
+			return
+		}
 	}
 }
