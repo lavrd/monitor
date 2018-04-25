@@ -3,6 +3,13 @@ let socket = null;
 const elStatus = document.getElementById('status');
 const elContainersName = document.getElementById('name');
 const elAlert = document.getElementById('alert');
+const elRoot = document.getElementById('root');
+
+const interval = 50;
+
+const containers = [];
+
+const charts = new Map();
 
 const STATUS = {
   SUCCESS: 'SUCCESS',
@@ -39,13 +46,89 @@ const setStatus = (status) => {
   }
 };
 
-const newContainer = () => {
-
+const dataset = (label, color) => {
+  return {
+    label: label,
+    data: [],
+    backgroundColor: color,
+    borderColor: color,
+    pointRadius: 0,
+    fill: false
+  };
 };
 
-const newContainers = (metrics) => {
-  metrics.forEach((metric) => {
-    console.log(metric);
+const newContainer = (name) => {
+    const div = document.createElement('div');
+    div.classList.add('col-6');
+    div.id = name;
+    elRoot.appendChild(div);
+
+    const canvas = document.createElement('canvas');
+    canvas.id = `chart#${name}`;
+    div.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+    const config = {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            dataset('mem', '#204B57'),
+            dataset('cpu', '#197BBD')
+          ]
+        },
+        options: {
+          title: {
+            display: true,
+            text: name
+          },
+          scales: {
+            xAxes: [{
+              type: 'time',
+              time: {
+                displayFormats: {
+                  quarter: 'h:mm:ss a'
+                }
+              }
+            }]
+          }
+        }
+      }
+    ;
+
+    charts[name] = new Chart(ctx, config);
+  }
+;
+
+const updateData = (data, value) => {
+  if (data.length === interval) {
+    data.shift();
+  }
+  data.push(value);
+  return data;
+};
+
+// todo выводить еще по нетворку и чтению/записи
+// todo all const
+// todo проверить такое чувство что хендлер не закрывается
+const checkContainers = (metrics) => {
+  metrics.forEach((m) => {
+    const name = m.name;
+    if (!containers.includes(name)) {
+      containers.push(name);
+      newContainer(name);
+    } else {
+      const chart = charts[name];
+      chart.data.datasets.forEach((dataset) => {
+        if (dataset.label === 'mem') dataset.data = updateData(dataset.data, m.memory_percentage);
+        else dataset.data = updateData(dataset.data, m.cpu_percentage);
+      });
+
+
+      chart.data.labels = updateData(chart.data.labels, m.time);
+
+      chart.update();
+    }
   });
 };
 
@@ -76,7 +159,7 @@ const start = (all = false) => {
 
     if (metrics === undefined) return;
 
-    newContainers(metrics);
+    checkContainers(metrics);
   };
 
   socket.onerror = () => {
@@ -90,3 +173,4 @@ const stop = () => {
   if (socket !== null) socket.close();
   socket = null;
 };
+;

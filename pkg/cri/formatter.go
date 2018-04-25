@@ -3,30 +3,34 @@ package cri
 import (
 	"math"
 	"strings"
+	"time"
 
 	"github.com/docker/docker/api/types"
 )
 
+// ContainerStats
 type ContainerStats struct {
-	Name             string  `json:"name"`
-	Id               string  `json:"id"`
-	CPUPercentage    float64 `json:"cpu_percentage"`
-	Memory           float64 `json:"memory"`
-	MemoryLimit      float64 `json:"memory_limit"`
-	MemoryPercentage float64 `json:"memory_percentage"`
-	NetworkRx        float64 `json:"network_rx"`
-	NetworkTx        float64 `json:"network_tx"`
-	IORead           float64 `json:"io_read"`
-	IOWrite          float64 `json:"io_write"`
+	Name             string    `json:"name"`
+	Id               string    `json:"id"`
+	CPUPercentage    float64   `json:"cpu_percentage"`
+	Memory           float64   `json:"memory"`
+	MemoryLimit      float64   `json:"memory_limit"`
+	MemoryPercentage float64   `json:"memory_percentage"`
+	NetworkRx        float64   `json:"network_rx"`
+	NetworkTx        float64   `json:"network_tx"`
+	IORead           float64   `json:"io_read"`
+	IOWrite          float64   `json:"io_write"`
+	Time             time.Time `json:"time"`
 }
 
-// Formatting returns the basic metrics from all
+// Formatting returns formatted container stats
 func (r *Cri) Formatting(id string, s *types.StatsJSON) *ContainerStats {
 	cs := &ContainerStats{
 		Name:        id,
 		Id:          s.ID,
 		Memory:      float64(s.MemoryStats.Usage),
 		MemoryLimit: float64(s.MemoryStats.Limit),
+		Time:        time.Now().UTC(),
 	}
 
 	cs.memory(s)
@@ -37,19 +41,19 @@ func (r *Cri) Formatting(id string, s *types.StatsJSON) *ContainerStats {
 	return cs
 }
 
-// parse memory (returns memory in percentages)
-func (s *ContainerStats) memory(statsJSON *types.StatsJSON) {
+// memory set memory in percentages
+func (cs *ContainerStats) memory(statsJSON *types.StatsJSON) {
 	mem := float64(statsJSON.MemoryStats.Usage) / float64(statsJSON.MemoryStats.Limit) * 100.0
 
 	if math.IsNaN(mem) {
-		s.MemoryPercentage = 0
+		cs.MemoryPercentage = 0
 	}
 
-	s.MemoryPercentage = mem
+	cs.MemoryPercentage = mem
 }
 
-// parse network metrics
-func (s *ContainerStats) network(network map[string]types.NetworkStats) {
+// network set network metrics
+func (cs *ContainerStats) network(network map[string]types.NetworkStats) {
 	var (
 		rx, tx float64
 	)
@@ -59,11 +63,11 @@ func (s *ContainerStats) network(network map[string]types.NetworkStats) {
 		tx += float64(v.TxBytes)
 	}
 
-	s.NetworkTx = tx
-	s.NetworkRx = rx
+	cs.NetworkTx = tx
+	cs.NetworkRx = rx
 }
 
-// parse cpu (returns cpu in percentages)
+// cpu set cpu in percentages
 func (cs *ContainerStats) cpu(s *types.StatsJSON) {
 	var (
 		cpuPercent  = 0.0
@@ -82,7 +86,7 @@ func (cs *ContainerStats) cpu(s *types.StatsJSON) {
 	cs.CPUPercentage = cpuPercent
 }
 
-// parse r/w metrics
+// io set r/w metrics
 func (cs *ContainerStats) io(IOStats types.BlkioStats) {
 	var (
 		blkRead, blkWrite uint64

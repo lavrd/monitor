@@ -20,5 +20,3 @@ func Router() http.Handler {
 
 	return r
 }
-
-// todo продумтаь логи

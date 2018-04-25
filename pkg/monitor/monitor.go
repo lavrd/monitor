@@ -7,7 +7,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spacelavr/monitor/pkg/cri"
 	"github.com/spacelavr/monitor/pkg/monitor/env"
 	"github.com/spacelavr/monitor/pkg/monitor/metrics"
 	"github.com/spacelavr/monitor/pkg/monitor/router"
@@ -15,6 +14,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Daemon start monitor daemon
 func Daemon() {
 	log.Debug("start monitor daemon")
 
@@ -24,7 +24,8 @@ func Daemon() {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	m := metrics.New(cri.New())
+	m := metrics.New()
+	defer m.Cri.Close()
 
 	env.SetMetrics(m)
 

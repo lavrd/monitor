@@ -15,9 +15,9 @@ type Cri struct {
 	ctx context.Context
 }
 
-// New returns new runtime
+// New returns new cri
 func New() *Cri {
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,6 +28,11 @@ func New() *Cri {
 		cli,
 		ctx,
 	}
+}
+
+// Close close cri connection
+func (c *Cri) Close() {
+	c.cli.Close()
 }
 
 // ContainerInspect returns container info

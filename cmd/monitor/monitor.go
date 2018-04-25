@@ -2,29 +2,21 @@ package main
 
 import (
 	"github.com/spacelavr/monitor/pkg/monitor"
+	"github.com/spacelavr/monitor/pkg/types"
 	"github.com/spacelavr/monitor/pkg/utils/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	verbose                      bool
-	updContainersInterval        int
-	updCOntainersMetricsInterval int
-	port                         int
+	verbose    bool
+	cInterval  int
+	cmInterval int
+	port       int
 
 	// CLI main command
 	CLI = &cobra.Command{
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			if len(args) > 0 {
-				err := cmd.Help()
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				return
-			}
-
 			log.SetVerbose(verbose)
 		},
 		Run: func(cmd *cobra.Command, args []string) {
@@ -34,24 +26,20 @@ var (
 )
 
 func init() {
-	CLI.Flags().IntVarP(&port, "port", "p", 2000, "set api port")
-	CLI.Flags().IntVarP(&updContainersInterval, "CInterval", "c", 3, "set update containers interval")
-	CLI.Flags().IntVarP(&updCOntainersMetricsInterval, "CMInterval", "m", 1, "set update containers metrics interval")
-	CLI.Flags().BoolVarP(&verbose, "verbose", "v", false, "set verbose output")
+	CLI.Flags().IntVarP(&port, types.FPort, types.FSPort, 2000, "set http port")
+	CLI.Flags().IntVarP(&cInterval, types.FCInterval, types.FSCInterval, 3, "set update containers interval")
+	CLI.Flags().IntVarP(&cmInterval, types.FCMInterval, types.FSCMInterval, 1, "set update containers metrics interval")
+	CLI.Flags().BoolVarP(&verbose, types.FVerbose, types.FSVerbose, false, "set verbose output")
 
-	err := viper.BindPFlag("port", CLI.Flags().Lookup("port"))
+	err := viper.BindPFlag(types.FPort, CLI.Flags().Lookup(types.FPort))
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = viper.BindPFlag("CInterval", CLI.Flags().Lookup("CInterval"))
+	err = viper.BindPFlag(types.FCInterval, CLI.Flags().Lookup(types.FCInterval))
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = viper.BindPFlag("CMInterval", CLI.Flags().Lookup("CMInterval"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = viper.BindPFlag("verbose", CLI.Flags().Lookup("verbose"))
+	err = viper.BindPFlag(types.FCMInterval, CLI.Flags().Lookup(types.FCMInterval))
 	if err != nil {
 		log.Fatal(err)
 	}
