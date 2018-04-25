@@ -7,12 +7,14 @@ const elContainersName = document.getElementById('name');
 const elAlert = document.getElementById('alert');
 const elRoot = document.getElementById('root');
 
+// status types
 const STATUS = {
   SUCCESS: 'SUCCESS',
   ERROR: 'ERROR',
   CLOSE: 'CLOSE'
 };
 
+// set alert text or hide
 const setAlert = (text) => {
   const hideClass = 'text-hide';
 
@@ -22,6 +24,7 @@ const setAlert = (text) => {
   elAlert.innerText = text;
 };
 
+// set status classes
 const setStatus = (status) => {
   elStatus.className = '';
 
@@ -42,6 +45,7 @@ const setStatus = (status) => {
   }
 };
 
+// prepare dataset
 const dataset = (label, color) => {
   return {
     label: label,
@@ -53,6 +57,7 @@ const dataset = (label, color) => {
   };
 };
 
+// create new container chart
 const newContainer = (name) => {
     const div = document.createElement('div');
     div.classList.add('col-6');
@@ -96,6 +101,7 @@ const newContainer = (name) => {
   }
 ;
 
+// update data in chart
 const updateData = (data, value) => {
   if (data.length === 50) {
     data.shift();
@@ -104,6 +110,7 @@ const updateData = (data, value) => {
   return data;
 };
 
+// update container chart
 const updateContainer = (name, m) => {
   const chart = charts.get(name);
 
@@ -116,6 +123,7 @@ const updateContainer = (name, m) => {
   chart.update();
 };
 
+// check new or old containers
 const checkContainers = (metrics) => {
   metrics.forEach((m) => {
     const name = m.name;
@@ -140,11 +148,13 @@ const checkContainers = (metrics) => {
   });
 };
 
+// delete old container
 const oldContainer = (name) => {
   charts.delete(name);
   elRoot.removeChild(document.getElementById(name));
 };
 
+// start check metrics
 const start = (all = false) => {
   stop();
 
@@ -178,6 +188,7 @@ const start = (all = false) => {
   };
 };
 
+// stop check metrics
 const stop = () => {
   setStatus(STATUS.CLOSE);
 
