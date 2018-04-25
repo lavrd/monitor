@@ -5,15 +5,18 @@ import (
 	"strings"
 	"time"
 
-	dt "github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types"
 	"github.com/spacelavr/monitor/pkg/cri"
-	"github.com/spacelavr/monitor/pkg/types"
 	"github.com/spacelavr/monitor/pkg/utils/log"
-	"github.com/spf13/viper"
 )
 
 // collect collect metrics
 func (m *Metrics) collect(id string) error {
+	defer func() {
+		m.delete(id)
+		log.Debug("container `", id, "` stopped")
+	}()
+
 	reader, err := m.Cri.ContainerStats(id)
 	if err != nil {
 		return err
@@ -21,35 +24,15 @@ func (m *Metrics) collect(id string) error {
 	defer reader.Close()
 
 	var (
-		stopped   = make(chan bool)
-		statsJSON *dt.StatsJSON
-		dec       = json.NewDecoder(reader)
+		stats *types.StatsJSON
+		dec   = json.NewDecoder(reader)
 	)
 
-	defer func() {
-		close(stopped)
-		m.delete(id)
-		log.Debug("container `", id, "` stopped")
-	}()
-
-	go func() {
-		for range time.Tick(time.Second * time.Duration(viper.GetInt(types.FCInterval))) {
-			if info, err := m.Cri.ContainerInspect(id); err != nil || !info.State.Running {
-				stopped <- true
-				return
-			}
-		}
-	}()
-
 	for range time.Tick(m.cmInterval) {
-		select {
-		case <-stopped:
+		if err = dec.Decode(&stats); err != nil {
 			return nil
-		default:
-			if err = dec.Decode(&statsJSON); err != nil {
-				return err
-			}
-			m.save(id, m.Cri.Formatting(id, statsJSON))
+		} else {
+			m.save(id, m.Cri.Formatting(id, stats))
 		}
 	}
 
@@ -82,9 +65,8 @@ func (m *Metrics) accumulate(ids []string) []*cri.ContainerStats {
 	)
 
 	for _, id := range ids {
-		if data, ok := m.metrics[id]; ok {
+		if data, ok := m.load(id); ok {
 			metrics = append(metrics, data)
-			continue
 		}
 	}
 
@@ -92,11 +74,12 @@ func (m *Metrics) accumulate(ids []string) []*cri.ContainerStats {
 }
 
 // load load metrics from map by id
-func (m *metricsMap) load(id string) *cri.ContainerStats {
+func (m *metricsMap) load(id string) (*cri.ContainerStats, bool) {
 	m.RLock()
 	defer m.RUnlock()
 
-	return m.metrics[id]
+	cs, ok := m.metrics[id]
+	return cs, ok
 }
 
 // save save metrics to map by id

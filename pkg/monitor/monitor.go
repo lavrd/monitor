@@ -24,7 +24,10 @@ func Daemon() {
 
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
 
-	m := metrics.New()
+	m, err := metrics.New()
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer m.Cri.Close()
 
 	env.SetMetrics(m)

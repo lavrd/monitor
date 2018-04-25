@@ -16,18 +16,16 @@ type Cri struct {
 }
 
 // New returns new cri
-func New() *Cri {
+func New() (*Cri, error) {
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
+		return nil, err
 	}
 
 	ctx := context.Background()
 
-	return &Cri{
-		cli,
-		ctx,
-	}
+	return &Cri{cli, ctx}, nil
 }
 
 // Close close cri connection
@@ -59,11 +57,11 @@ func (r *Cri) ContainerList() ([]types.Container, error) {
 
 // ContainerStats returns container metrics channel
 func (r *Cri) ContainerStats(id string) (io.ReadCloser, error) {
-	cStats, err := r.cli.ContainerStats(r.ctx, id, true)
+	cs, err := r.cli.ContainerStats(r.ctx, id, true)
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 
-	return cStats.Body, err
+	return cs.Body, err
 }

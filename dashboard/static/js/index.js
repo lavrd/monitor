@@ -5,10 +5,6 @@ const elContainersName = document.getElementById('name');
 const elAlert = document.getElementById('alert');
 const elRoot = document.getElementById('root');
 
-const interval = 50;
-
-const containers = [];
-
 const charts = new Map();
 
 const STATUS = {
@@ -96,16 +92,28 @@ const newContainer = (name) => {
       }
     ;
 
-    charts[name] = new Chart(ctx, config);
+    charts.set(name, new Chart(ctx, config));
   }
 ;
 
 const updateData = (data, value) => {
-  if (data.length === interval) {
+  if (data.length === 50) {
     data.shift();
   }
   data.push(value);
   return data;
+};
+
+const updateContainer = (name, m) => {
+  const chart = charts.get(name);
+  chart.data.datasets.forEach((dataset) => {
+    console.log(1, m, m.cpu_percentage);
+    if (dataset.label === 'mem') dataset.data = updateData(dataset.data, m.memory_percentage);
+    else dataset.data = updateData(dataset.data, m.cpu_percentage);
+  });
+  chart.data.labels = updateData(chart.data.labels, m.time);
+
+  chart.update();
 };
 
 // todo выводить еще по нетворку и чтению/записи
@@ -114,22 +122,30 @@ const updateData = (data, value) => {
 const checkContainers = (metrics) => {
   metrics.forEach((m) => {
     const name = m.name;
-    if (!containers.includes(name)) {
-      containers.push(name);
+    if (!charts.has(name)) {
       newContainer(name);
     } else {
-      const chart = charts[name];
-      chart.data.datasets.forEach((dataset) => {
-        if (dataset.label === 'mem') dataset.data = updateData(dataset.data, m.memory_percentage);
-        else dataset.data = updateData(dataset.data, m.cpu_percentage);
-      });
-
-
-      chart.data.labels = updateData(chart.data.labels, m.time);
-
-      chart.update();
+      updateContainer(name, m);
     }
   });
+
+  charts.forEach((val, key) => {
+    let isExists = false;
+
+    metrics.forEach((m) => {
+      if (m.name === key) {
+        isExists = true;
+      }
+    });
+
+    if (!isExists) oldContainer(key);
+  });
+};
+
+// todo id -> name
+const oldContainer = (name) => {
+  charts.delete(name);
+  elRoot.removeChild(document.getElementById(name));
 };
 
 const start = (all = false) => {
@@ -172,5 +188,8 @@ const stop = () => {
 
   if (socket !== null) socket.close();
   socket = null;
+
+  charts.forEach((val, key) => {
+    oldContainer(key);
+  });
 };
-;

@@ -12,8 +12,8 @@ import (
 
 // Metrics
 type Metrics struct {
-	Cri        *cri.Cri
 	*metricsMap
+	Cri        *cri.Cri
 	cInterval  time.Duration
 	cmInterval time.Duration
 }
@@ -30,15 +30,20 @@ type Public struct {
 }
 
 // New returns new metrics
-func New() *Metrics {
+func New() (*Metrics, error) {
+	r, err := cri.New()
+	if err != nil {
+		return nil, err
+	}
+
 	return &Metrics{
-		Cri: cri.New(),
+		Cri: r,
 		metricsMap: &metricsMap{
 			metrics: make(map[string]*cri.ContainerStats),
 		},
 		cInterval:  time.Second * time.Duration(viper.GetInt(types.FCInterval)),
 		cmInterval: time.Second * time.Duration(viper.GetInt(types.FCMInterval)),
-	}
+	}, nil
 }
 
 // Collect collect metrics and check for new containers

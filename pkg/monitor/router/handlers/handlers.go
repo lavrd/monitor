@@ -12,7 +12,7 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-// execute execute template and render to client
+// execute execute template
 func execute(path string, w http.ResponseWriter) {
 	html, err := template.ParseFiles(path)
 	if err != nil {
@@ -40,8 +40,9 @@ func P404H(w http.ResponseWriter, _ *http.Request) {
 // MetricsH
 func MetricsH(ws *websocket.Conn) {
 	var (
-		m   = env.GetMetrics()
-		ids = make([]byte, 512)
+		duration = time.Second * time.Duration(viper.GetInt(types.FCMInterval))
+		m        = env.GetMetrics()
+		ids      = make([]byte, 512)
 	)
 
 	n, err := ws.Read(ids)
@@ -49,10 +50,9 @@ func MetricsH(ws *websocket.Conn) {
 		return
 	}
 
-	duration := time.Second * time.Duration(viper.GetInt(types.FCMInterval))
-
 	for range time.Tick(duration) {
 		metrics := m.Public(string(ids[:n]))
+
 		if err := websocket.JSON.Send(ws, metrics); err != nil {
 			return
 		}

@@ -1,13 +1,13 @@
 package types
 
 const (
-	// flags
+	// cli flags
 	FPort       = "port"
 	FCInterval  = "ci"
 	FCMInterval = "cmi"
 	FVerbose    = "verbose"
 
-	// short flags
+	// cli short flags
 	FSPort       = "p"
 	FSCInterval  = "c"
 	FSCMInterval = "m"
