@@ -1,11 +1,11 @@
 let socket = null;
 
+const charts = new Map();
+
 const elStatus = document.getElementById('status');
 const elContainersName = document.getElementById('name');
 const elAlert = document.getElementById('alert');
 const elRoot = document.getElementById('root');
-
-const charts = new Map();
 
 const STATUS = {
   SUCCESS: 'SUCCESS',
@@ -25,20 +25,20 @@ const setAlert = (text) => {
 const setStatus = (status) => {
   elStatus.className = '';
 
-  const base = 'badge';
+  const base = 'badge badge-';
 
   switch (status) {
     case STATUS.SUCCESS:
-      elStatus.classList.add(`${base}`, 'badge-success');
+      elStatus.className = `${base}success`;
       break;
     case STATUS.ERROR:
-      elStatus.classList.add(`${base}`, 'badge-danger');
+      elStatus.className = `${base}danger`;
       break;
     case STATUS.CLOSE:
-      elStatus.classList.add(`${base}`, 'badge-secondary');
+      elStatus.className = `${base}secondary`;
       break;
     default:
-      elStatus.classList.add(`${base}`, 'badge-warning');
+      elStatus.className = `${base}warning`;
   }
 };
 
@@ -106,8 +106,8 @@ const updateData = (data, value) => {
 
 const updateContainer = (name, m) => {
   const chart = charts.get(name);
+
   chart.data.datasets.forEach((dataset) => {
-    console.log(1, m, m.cpu_percentage);
     if (dataset.label === 'mem') dataset.data = updateData(dataset.data, m.memory_percentage);
     else dataset.data = updateData(dataset.data, m.cpu_percentage);
   });
@@ -116,12 +116,10 @@ const updateContainer = (name, m) => {
   chart.update();
 };
 
-// todo выводить еще по нетворку и чтению/записи
-// todo all const
-// todo проверить такое чувство что хендлер не закрывается
 const checkContainers = (metrics) => {
   metrics.forEach((m) => {
     const name = m.name;
+
     if (!charts.has(name)) {
       newContainer(name);
     } else {
@@ -142,7 +140,6 @@ const checkContainers = (metrics) => {
   });
 };
 
-// todo id -> name
 const oldContainer = (name) => {
   charts.delete(name);
   elRoot.removeChild(document.getElementById(name));
@@ -158,7 +155,6 @@ const start = (all = false) => {
 
   socket.onopen = () => {
     setStatus(STATUS.SUCCESS);
-
     socket.send(value);
   };
 
@@ -172,7 +168,6 @@ const start = (all = false) => {
     const metrics = data.metrics;
 
     setAlert(alert);
-
     if (metrics === undefined) return;
 
     checkContainers(metrics);
