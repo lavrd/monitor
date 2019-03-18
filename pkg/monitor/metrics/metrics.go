@@ -4,9 +4,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/spacelavr/monitor/pkg/cri"
-	"github.com/spacelavr/monitor/pkg/types"
-	"github.com/spacelavr/monitor/pkg/utils/log"
+	"monitor/pkg/cri"
+	"monitor/pkg/types"
+	"monitor/pkg/utils/log"
+
 	"github.com/spf13/viper"
 )
 

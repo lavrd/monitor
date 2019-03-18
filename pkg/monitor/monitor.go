@@ -7,10 +7,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spacelavr/monitor/pkg/monitor/env"
-	"github.com/spacelavr/monitor/pkg/monitor/metrics"
-	"github.com/spacelavr/monitor/pkg/monitor/router"
-	"github.com/spacelavr/monitor/pkg/utils/log"
+	"monitor/pkg/monitor/env"
+	"monitor/pkg/monitor/metrics"
+	"monitor/pkg/monitor/router"
+	"monitor/pkg/utils/log"
+
 	"github.com/spf13/viper"
 )
 

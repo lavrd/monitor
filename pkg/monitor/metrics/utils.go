@@ -5,9 +5,10 @@ import (
 	"strings"
 	"time"
 
+	"monitor/pkg/cri"
+	"monitor/pkg/utils/log"
+
 	"github.com/docker/docker/api/types"
-	"github.com/spacelavr/monitor/pkg/cri"
-	"github.com/spacelavr/monitor/pkg/utils/log"
 )
 
 // collect collect metrics

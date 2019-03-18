@@ -4,9 +4,10 @@ import (
 	"context"
 	"io"
 
+	"monitor/pkg/utils/log"
+
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/spacelavr/monitor/pkg/utils/log"
 )
 
 // Cri
@@ -17,7 +18,7 @@ type Cri struct {
 
 // New returns new cri
 func New() (*Cri, error) {
-	cli, err := client.NewClientWithOpts(client.FromEnv)
+	cli, err := client.NewEnvClient()
 	if err != nil {
 		log.Error(err)
 		return nil, err

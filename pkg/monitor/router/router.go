@@ -3,8 +3,9 @@ package router
 import (
 	"net/http"
 
+	"monitor/pkg/monitor/router/handlers"
+
 	"github.com/gorilla/mux"
-	"github.com/spacelavr/monitor/pkg/monitor/router/handlers"
 	"golang.org/x/net/websocket"
 )
 

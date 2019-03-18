@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/spacelavr/monitor/pkg/monitor/env"
-	"github.com/spacelavr/monitor/pkg/types"
-	"github.com/spacelavr/monitor/pkg/utils/log"
+	"monitor/pkg/monitor/env"
+	"monitor/pkg/types"
+	"monitor/pkg/utils/log"
+
 	"github.com/spf13/viper"
 	"golang.org/x/net/websocket"
 )

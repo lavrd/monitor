@@ -1,7 +1,7 @@
 package env
 
 import (
-	"github.com/spacelavr/monitor/pkg/monitor/metrics"
+	"monitor/pkg/monitor/metrics"
 )
 
 type env struct {

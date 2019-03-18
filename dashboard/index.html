@@ -1,48 +1,50 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link rel="icon" href="./static/img/favicon.png" type="image/png"/>
-
-  <link href="./static/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-  <link href="./static/css/index.css" rel="stylesheet" type="text/css"/>
+  <link rel="icon" href="./static/img/favicon.png" type="image/png" />
+  <link href="./static/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+  <link href="./static/css/index.css" rel="stylesheet" type="text/css" />
 
   <title>Monitor</title>
 </head>
 
 <body>
-<header class="container">
-  <div class="d-flex align-items-baseline justify-content-between">
-    <h1 class="display-4 mt-5 pt-5 text-muted">
-      Monitor
-    </h1>
+  <header class="container">
+    <div class="d-flex align-items-baseline justify-content-between">
+      <h1 class="display-4 mt-5 pt-5 text-muted">
+        Monitor
+      </h1>
 
-    <div>
-      <span id="status" class="badge badge-secondary">
-        STATUS
-      </span>
+      <div>
+        <span id="status" class="badge badge-secondary">
+          STATUS
+        </span>
+      </div>
     </div>
-  </div>
 
-  <div class="text-hide alert alert-info" id="alert"></div>
-</header>
+    <div class="text-hide alert alert-info" id="alert"></div>
+  </header>
 
-<section class="container">
-  <div class="input-group mb-5">
-    <input id="name" type="text" class="form-control" placeholder="Container name">
+  <section class="container">
+    <div class="input-group mb-5">
+      <input id="name" type="text" class="form-control" placeholder="Container name">
 
-    <div class="input-group-append">
-      <button class="btn btn-outline-secondary" onclick="start()">GO</button>
-      <button class="btn btn-outline-secondary" onclick="start(true)">ALL</button>
-      <button class="btn btn-outline-secondary" onclick="stop()">STOP</button>
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" onclick="start()">GO</button>
+        <button class="btn btn-outline-secondary" onclick="start(true)">ALL</button>
+        <button class="btn btn-outline-secondary" onclick="stop()">STOP</button>
+      </div>
     </div>
-  </div>
 
-  <div class="row" id="root"></div>
-</section>
+    <div class="row" id="root"></div>
+  </section>
 
-<script src="./static/js/chartjs.bundle.min.js"></script>
-<script src="./static/js/index.js"></script>
+  <script src="./static/js/chartjs.bundle.min.js"></script>
+  <script src="./static/js/index.js"></script>
 </body>
+
+</html>

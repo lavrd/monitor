@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/spacelavr/monitor/pkg/monitor"
-	"github.com/spacelavr/monitor/pkg/types"
-	"github.com/spacelavr/monitor/pkg/utils/log"
+	"monitor/pkg/monitor"
+	"monitor/pkg/types"
+	"monitor/pkg/utils/log"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

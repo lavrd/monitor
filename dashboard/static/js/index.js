@@ -59,47 +59,45 @@ const dataset = (label, color) => {
 
 // create new container chart
 const newContainer = (name) => {
-    const div = document.createElement('div');
-    div.classList.add('col-6');
-    div.id = name;
-    elRoot.appendChild(div);
+  const div = document.createElement('div');
+  div.classList.add('col-6');
+  div.id = name;
+  elRoot.appendChild(div);
 
-    const canvas = document.createElement('canvas');
-    canvas.id = `chart#${name}`;
-    div.appendChild(canvas);
+  const canvas = document.createElement('canvas');
+  canvas.id = `chart#${name}`;
+  div.appendChild(canvas);
 
-    const ctx = canvas.getContext('2d');
-    const config = {
-        type: 'line',
-        data: {
-          labels: [],
-          datasets: [
-            dataset('mem', '#204B57'),
-            dataset('cpu', '#197BBD')
-          ]
-        },
-        options: {
-          title: {
-            display: true,
-            text: name
-          },
-          scales: {
-            xAxes: [{
-              type: 'time',
-              time: {
-                displayFormats: {
-                  quarter: 'h:mm:ss a'
-                }
-              }
-            }]
+  const ctx = canvas.getContext('2d');
+  const config = {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        dataset('mem', '#204B57'),
+        dataset('cpu', '#197BBD')
+      ]
+    },
+    options: {
+      title: {
+        display: true,
+        text: name
+      },
+      scales: {
+        xAxes: [{
+          type: 'time',
+          time: {
+            displayFormats: {
+              quarter: 'h:mm:ss a'
+            }
           }
-        }
+        }]
       }
-    ;
+    }
+  };
 
-    charts.set(name, new Chart(ctx, config));
-  }
-;
+  charts.set(name, new Chart(ctx, config));
+};
 
 // update data in chart
 const updateData = (data, value) => {
