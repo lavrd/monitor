@@ -15,7 +15,7 @@ import (
 
 func main() {
 	metricsInterval := flag.Duration("cmi", time.Second, "set metrics interval")
-	containerInterval := flag.Duration("ci ", time.Second*5, "set container interval")
+	containersInterval := flag.Duration("ci ", time.Second*5, "set container interval")
 	port := flag.Int("port", 2000, "set api port")
 	verbose := flag.Bool("v", false, "set verbose output")
 	flag.Parse()
@@ -30,12 +30,12 @@ func main() {
 		log.Logger = log.Level(zerolog.DebugLevel)
 	}
 
-	if err := monitor.Daemon(*metricsInterval, *containerInterval, *port); err != nil {
+	if err := monitor.Daemon(*metricsInterval, *containersInterval, *port); err != nil {
 		log.Fatal().Err(err).Msg("daemon error")
 	}
 
 	interrupt := make(chan os.Signal)
 	signal.Notify(interrupt, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGKILL)
 	<-interrupt
-	log.Debug().Msg("handle SIGINT, SIGTERM, SIGQUIT, SIGKILL")
+	log.Info().Msg("handle SIGINT, SIGTERM, SIGQUIT, SIGKILL")
 }

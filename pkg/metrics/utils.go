@@ -5,35 +5,37 @@ import (
 	"strings"
 	"time"
 
-	"monitor/pkg/cri"
-	"monitor/pkg/utils/log"
-
 	"github.com/docker/docker/api/types"
+	"github.com/rs/zerolog/log"
+
+	"monitor/pkg/docker"
 )
 
 // collect collect metrics
 func (m *Metrics) collect(id string) error {
 	defer func() {
 		m.delete(id)
-		log.Debug("container `", id, "` stopped")
+		log.Debug().Msgf("container %s stopped", id)
 	}()
 
-	reader, err := m.Cri.ContainerStats(id)
+	reader, err := m.docker.ContainerStats(id)
 	if err != nil {
 		return err
 	}
-	defer reader.Close()
+	defer func() {
+		if err := reader.Close(); err != nil {
+			log.Error().Err(err).Msg("close reader error")
+		}
+	}()
 
-	var (
-		stats *types.StatsJSON
-		dec   = json.NewDecoder(reader)
-	)
+	var stats *types.StatsJSON
+	decoder := json.NewDecoder(reader)
 
-	for range time.Tick(m.cmInterval) {
-		if err = dec.Decode(&stats); err != nil {
+	for range time.Tick(m.mInterval) {
+		if err = decoder.Decode(&stats); err != nil {
 			return nil
 		} else {
-			m.save(id, m.Cri.Formatting(id, stats))
+			m.save(id, m.docker.Formatting(id, stats))
 		}
 	}
 
@@ -42,9 +44,7 @@ func (m *Metrics) collect(id string) error {
 
 // parse parse ids and returns ids slice
 func (m *Metrics) parse(id string) []string {
-	var (
-		ids []string
-	)
+	var ids []string
 
 	if id == "all" {
 		for _, d := range m.metrics {
@@ -61,9 +61,7 @@ func (m *Metrics) parse(id string) []string {
 
 // accumulate accumulate metrics by ids
 func (m *Metrics) accumulate(ids []string) []*docker.ContainerStats {
-	var (
-		metrics []*docker.ContainerStats
-	)
+	var metrics []*docker.ContainerStats
 
 	for _, id := range ids {
 		if data, ok := m.load(id); ok {

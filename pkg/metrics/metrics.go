@@ -4,19 +4,17 @@ import (
 	"sync"
 	"time"
 
-	"monitor/pkg/cri"
-	"monitor/pkg/types"
-	"monitor/pkg/utils/log"
+	"github.com/rs/zerolog/log"
 
-	"github.com/spf13/viper"
+	"monitor/pkg/docker"
 )
 
 // Metrics
 type Metrics struct {
 	*metricsMap
-	Cri        *docker.Cri
-	cInterval  time.Duration
-	cmInterval time.Duration
+	docker    *docker.Docker
+	cInterval time.Duration
+	mInterval time.Duration
 }
 
 type metricsMap struct {
@@ -24,33 +22,28 @@ type metricsMap struct {
 	metrics map[string]*docker.ContainerStats
 }
 
-// Public
-type Public struct {
+// Info
+type Info struct {
 	Metrics []*docker.ContainerStats `json:"metrics,omitempty"`
 	Alert   string                   `json:"alert,omitempty"`
 }
 
 // New returns new metrics
-func New() (*Metrics, error) {
-	r, err := docker.New()
-	if err != nil {
-		return nil, err
-	}
-
+func New(d *docker.Docker, containersInterval, metricsInterval time.Duration) *Metrics {
 	return &Metrics{
-		Cri: r,
+		docker: d,
 		metricsMap: &metricsMap{
 			metrics: make(map[string]*docker.ContainerStats),
 		},
-		cInterval:  time.Second * time.Duration(viper.GetInt(types.FCInterval)),
-		cmInterval: time.Second * time.Duration(viper.GetInt(types.FCMInterval)),
-	}, nil
+		cInterval: containersInterval,
+		mInterval: metricsInterval,
+	}
 }
 
 // Collect collect metrics and check for new containers
 func (m *Metrics) Collect() error {
 	for range time.Tick(m.cInterval) {
-		containers, err := m.Cri.ContainerList()
+		containers, err := m.docker.ContainerList()
 		if err != nil {
 			return err
 		}
@@ -59,10 +52,10 @@ func (m *Metrics) Collect() error {
 			if _, ok := m.metrics[container.Names[0][1:]]; !ok {
 				go func() {
 					if err := m.collect(container.Names[0][1:]); err != nil {
-						log.Fatal(err)
+						log.Fatal().Err(err).Msg("collection metrics error")
 					}
 				}()
-				log.Debug("new container `", container.Names[0][1:], "`")
+				log.Info().Msgf("new container %s", container.Names[0][1:])
 			}
 		}
 	}
@@ -70,20 +63,19 @@ func (m *Metrics) Collect() error {
 	return nil
 }
 
-// Public returns public info about containers metrics
-func (m *Metrics) Public(id string) *Public {
+// Info returns info about containers metrics
+func (m *Metrics) Info(id string) *Info {
 	if len(m.metrics) == 0 {
-		return &Public{
+		return &Info{
 			Alert: "no running containers",
 		}
 	}
-
 	if metrics := m.accumulate(m.parse(id)); metrics == nil {
-		return &Public{
+		return &Info{
 			Alert: "these containers are not running",
 		}
 	} else {
-		return &Public{
+		return &Info{
 			Metrics: metrics,
 		}
 	}
