@@ -1,4 +1,4 @@
-package cri
+package docker
 
 import (
 	"math"
@@ -24,7 +24,7 @@ type ContainerStats struct {
 }
 
 // Formatting returns formatted container stats
-func (r *Cri) Formatting(id string, s *types.StatsJSON) *ContainerStats {
+func (d *Docker) Formatting(id string, s *types.StatsJSON) *ContainerStats {
 	cs := &ContainerStats{
 		Name:        id,
 		Id:          s.ID,

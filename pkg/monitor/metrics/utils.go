@@ -60,9 +60,9 @@ func (m *Metrics) parse(id string) []string {
 }
 
 // accumulate accumulate metrics by ids
-func (m *Metrics) accumulate(ids []string) []*cri.ContainerStats {
+func (m *Metrics) accumulate(ids []string) []*docker.ContainerStats {
 	var (
-		metrics []*cri.ContainerStats
+		metrics []*docker.ContainerStats
 	)
 
 	for _, id := range ids {
@@ -75,7 +75,7 @@ func (m *Metrics) accumulate(ids []string) []*cri.ContainerStats {
 }
 
 // load load metrics from map by id
-func (m *metricsMap) load(id string) (*cri.ContainerStats, bool) {
+func (m *metricsMap) load(id string) (*docker.ContainerStats, bool) {
 	m.RLock()
 	defer m.RUnlock()
 
@@ -84,7 +84,7 @@ func (m *metricsMap) load(id string) (*cri.ContainerStats, bool) {
 }
 
 // save save metrics to map by id
-func (m *metricsMap) save(id string, metrics *cri.ContainerStats) {
+func (m *metricsMap) save(id string, metrics *docker.ContainerStats) {
 	m.Lock()
 	defer m.Unlock()
 

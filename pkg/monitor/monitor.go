@@ -3,31 +3,23 @@ package monitor
 import (
 	"fmt"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
+
+	"github.com/rs/zerolog/log"
 
 	"monitor/pkg/monitor/env"
 	"monitor/pkg/monitor/metrics"
 	"monitor/pkg/monitor/router"
-	"monitor/pkg/utils/log"
 
 	"github.com/spf13/viper"
 )
 
 // Daemon start monitor daemon
-func Daemon() {
-	log.Debug("start monitor daemon")
-
-	var (
-		sig = make(chan os.Signal)
-	)
-
-	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+func Daemon() error {
+	log.Debug().Msg("starting monitor daemon")
 
 	m, err := metrics.New()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer m.Cri.Close()
 
@@ -50,6 +42,4 @@ func Daemon() {
 		}
 	}()
 
-	<-sig
-	log.Debug("handle SIGINT and SIGTERM")
 }

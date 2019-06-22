@@ -1,53 +1,41 @@
 package main
 
 import (
+	"flag"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+
 	"monitor/pkg/monitor"
-	"monitor/pkg/types"
-	"monitor/pkg/utils/log"
-
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
-
-var (
-	verbose    bool
-	cInterval  int
-	cmInterval int
-	port       int
-
-	// CLI main command
-	CLI = &cobra.Command{
-		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			log.SetVerbose(verbose)
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			monitor.Daemon()
-		},
-	}
-)
-
-func init() {
-	CLI.Flags().IntVarP(&port, types.FPort, types.FSPort, 2000, "set http port")
-	CLI.Flags().IntVarP(&cInterval, types.FCInterval, types.FSCInterval, 3, "set update containers interval")
-	CLI.Flags().IntVarP(&cmInterval, types.FCMInterval, types.FSCMInterval, 1, "set update containers metrics interval")
-	CLI.Flags().BoolVarP(&verbose, types.FVerbose, types.FSVerbose, false, "set verbose output")
-
-	err := viper.BindPFlag(types.FPort, CLI.Flags().Lookup(types.FPort))
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = viper.BindPFlag(types.FCInterval, CLI.Flags().Lookup(types.FCInterval))
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = viper.BindPFlag(types.FCMInterval, CLI.Flags().Lookup(types.FCMInterval))
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 
 func main() {
-	if err := CLI.Execute(); err != nil {
-		log.Fatal(err)
+	metricsInterval := flag.Duration("cmi", time.Second, "set metrics interval")
+	containerInterval := flag.Duration("ci ", time.Second*5, "set container interval")
+	port := flag.Int("port", 2000, "set api port")
+	verbose := flag.Bool("v", false, "set verbose output")
+	flag.Parse()
+
+	log.Logger = log.
+		Output(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}).
+		With().
+		Caller().
+		Logger().
+		Level(zerolog.InfoLevel)
+	if *verbose {
+		log.Logger = log.Level(zerolog.DebugLevel)
 	}
+
+	if err := monitor.Daemon(*metricsInterval, *containerInterval, *port); err != nil {
+		log.Fatal().Err(err).Msg("daemon error")
+	}
+
+	interrupt := make(chan os.Signal)
+	signal.Notify(interrupt, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGKILL)
+	<-interrupt
+	log.Debug().Msg("handle SIGINT, SIGTERM, SIGQUIT, SIGKILL")
 }

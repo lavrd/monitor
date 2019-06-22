@@ -14,25 +14,25 @@ import (
 // Metrics
 type Metrics struct {
 	*metricsMap
-	Cri        *cri.Cri
+	Cri        *docker.Cri
 	cInterval  time.Duration
 	cmInterval time.Duration
 }
 
 type metricsMap struct {
 	sync.RWMutex
-	metrics map[string]*cri.ContainerStats
+	metrics map[string]*docker.ContainerStats
 }
 
 // Public
 type Public struct {
-	Metrics []*cri.ContainerStats `json:"metrics,omitempty"`
-	Alert   string                `json:"alert,omitempty"`
+	Metrics []*docker.ContainerStats `json:"metrics,omitempty"`
+	Alert   string                   `json:"alert,omitempty"`
 }
 
 // New returns new metrics
 func New() (*Metrics, error) {
-	r, err := cri.New()
+	r, err := docker.New()
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func New() (*Metrics, error) {
 	return &Metrics{
 		Cri: r,
 		metricsMap: &metricsMap{
-			metrics: make(map[string]*cri.ContainerStats),
+			metrics: make(map[string]*docker.ContainerStats),
 		},
 		cInterval:  time.Second * time.Duration(viper.GetInt(types.FCInterval)),
 		cmInterval: time.Second * time.Duration(viper.GetInt(types.FCMInterval)),
