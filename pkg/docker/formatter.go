@@ -73,7 +73,7 @@ func (cs *ContainerStats) cpu(s *types.StatsJSON) {
 		cpuPercent  = 0.0
 		cpuDelta    = float64(s.CPUStats.CPUUsage.TotalUsage) - float64(s.PreCPUStats.CPUUsage.TotalUsage)
 		systemDelta = float64(s.CPUStats.SystemUsage) - float64(s.PreCPUStats.SystemUsage)
-		onlineCPUs  = float64(s.CPUStats.CPUUsage.TotalUsage)
+		onlineCPUs  = float64(len(s.CPUStats.CPUUsage.PercpuUsage))
 	)
 
 	if onlineCPUs == 0.0 {

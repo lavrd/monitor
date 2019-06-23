@@ -1,15 +1,12 @@
 package monitor
 
 import (
-	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/spf13/viper"
-	"monitor/pkg/monitor/metrics"
-
+	"monitor/pkg/docker"
+	"monitor/pkg/metrics"
 	"monitor/pkg/monitor/api"
 )
 
@@ -17,29 +14,28 @@ import (
 func Daemon(metricsInterval, containersInterval time.Duration, port int) error {
 	log.Debug().Msg("starting monitor daemon")
 
-	m, err := metrics.New()
+	d, err := docker.New()
 	if err != nil {
 		return err
 	}
-	defer m.Cri
+	defer d.Close()
 
-	env.SetMetrics(m)
+	m := metrics.New(d, containersInterval, metricsInterval)
+
+	a := api.New(metricsInterval, m, port)
 
 	go func() {
 		if err := m.Collect(); err != nil {
-			log.Fatal(err)
+			log.Fatal().Err(err).Msg("collect metrics error")
 		}
 	}()
 
 	go func() {
-		srv := &http.Server{
-			Handler: api.Router(),
-			Addr:    fmt.Sprintf(":%d", viper.GetInt("port")),
-		}
-
-		if err := srv.ListenAndServe(); err != nil {
-			log.Fatal(err)
+		defer a.Stop()
+		if err := a.Start(); err != nil {
+			log.Fatal().Err(err).Msg("start http server error")
 		}
 	}()
 
+	return nil
 }

@@ -5,56 +5,50 @@ import (
 	"net/http"
 	"time"
 
-	"monitor/pkg/monitor/env"
-	"monitor/pkg/types"
-	"monitor/pkg/utils/log"
-
-	"github.com/spf13/viper"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/net/websocket"
 )
 
 // execute execute template
-func execute(path string, w http.ResponseWriter) {
+func (a *API) execute(path string, w http.ResponseWriter) {
 	html, err := template.ParseFiles(path)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("parse files error")
 	}
 
 	tpl := template.Must(html, err)
 
 	err = tpl.Execute(w, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("execute template error")
 	}
 }
 
 // DashboardH
-func DashboardH(w http.ResponseWriter, _ *http.Request) {
-	execute("./dashboard/index.html", w)
+func (a *API) DashboardH(w http.ResponseWriter, _ *http.Request) {
+	a.execute("./dashboard/index.html", w)
 }
 
 // P404H
-func P404H(w http.ResponseWriter, _ *http.Request) {
-	execute("./dashboard/404.html", w)
+func (a *API) P404H(w http.ResponseWriter, _ *http.Request) {
+	a.execute("./dashboard/404.html", w)
 }
 
 // MetricsH
-func MetricsH(ws *websocket.Conn) {
-	var (
-		duration = time.Second * time.Duration(viper.GetInt(types.FCMInterval))
-		m        = env.GetMetrics()
-		ids      = make([]byte, 512)
-	)
+func (a *API) MetricsH(conn *websocket.Conn) {
+	ids := make([]byte, 512)
 
-	n, err := ws.Read(ids)
+	n, err := conn.Read(ids)
 	if err != nil {
+		log.Error().Err(err).Msg("read ids from websocket error")
 		return
 	}
 
-	for range time.Tick(duration) {
-		metrics := m.Public(string(ids[:n]))
+	for range time.Tick(a.metricsInterval) {
+		info := a.metrics.Info(string(ids[:n]))
 
-		if err := websocket.JSON.Send(ws, metrics); err != nil {
+		if err := websocket.JSON.Send(conn, info); err != nil {
+			log.Error().Err(err).Msg("send json error")
 			return
 		}
 	}

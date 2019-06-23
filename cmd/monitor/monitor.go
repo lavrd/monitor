@@ -16,7 +16,7 @@ import (
 func main() {
 	metricsInterval := flag.Duration("cmi", time.Second, "set metrics interval")
 	containersInterval := flag.Duration("ci ", time.Second*5, "set container interval")
-	port := flag.Int("port", 2000, "set api port")
+	port := flag.Int("port", 6664, "set api port")
 	verbose := flag.Bool("v", false, "set verbose output")
 	flag.Parse()
 

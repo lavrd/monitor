@@ -156,7 +156,7 @@ const oldContainer = (name) => {
 const start = (all = false) => {
   stop();
 
-  socket = new WebSocket('ws://localhost:2000/metrics');
+  socket = new WebSocket('ws://localhost:6664/metrics');
 
   let value = elContainersName.value;
   if (value === '' || all) value = 'all';
